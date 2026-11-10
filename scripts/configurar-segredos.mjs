@@ -20,9 +20,15 @@ if (!['homologacao', 'production'].includes(env)) {
   process.exit(1);
 }
 
+// No Git Bash (MINGW) do Windows o terminal não é um TTY de verdade: digitar "às cegas" pode
+// gravar um texto diferente do digitado. Nesse caso a digitação fica visível (e confirmada).
+const TERMINAL_LIMITADO = !!process.env.MSYSTEM || !process.stdin.isTTY;
+if (TERMINAL_LIMITADO) console.log('Aviso: terminal sem suporte a senha oculta (ex.: Git Bash). O que você digitar ficará visível.');
+
 function perguntar(texto, { oculto = false, padrao = '' } = {}) {
+  if (TERMINAL_LIMITADO) oculto = false;
   return new Promise((resolve) => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: !TERMINAL_LIMITADO });
     if (oculto) {
       rl._writeToOutput = (s) => { if (s.includes(texto)) rl.output.write(s); else rl.output.write('*'); };
     }

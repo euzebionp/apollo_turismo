@@ -8,6 +8,7 @@ export interface Env {
   WHATSAPP_QUEUE?: Queue<MensagemWhatsApp>;
   RESERVA_LIMITER?: RateLimiter;
   LOGIN_LIMITER?: RateLimiter;
+  FOTOS?: R2Bucket;          // opcional: com R2 ativado, as fotos vão para lá
 
   AMBIENTE: string;
   PIX_PROVIDER: 'simulado' | 'mercadopago' | 'asaas';

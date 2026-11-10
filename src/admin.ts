@@ -7,6 +7,7 @@ import { criarProvider } from './pix/provider';
 import { codigoReserva } from './whatsapp';
 import { formatarCpf, mascararCpf } from './validacao';
 import { agoraISO } from './util';
+import { REGEX_URL_FOTO, salvarFoto } from './fotos';
 import {
   PERMISSOES, PERMISSAO_MASTER, type Vars, encerrarSessoes, exigir, exigirSessao, hashSenha, login,
   normalizarUsuario, pode, registrar, validarForcaSenha,
@@ -214,7 +215,7 @@ function validarViagem(b: any, criando: boolean): { ok: true; v: ViagemInput } |
   const fotos = { veiculo: f.veiculo ?? [], hospedagem: f.hospedagem ?? [], destino: f.destino ?? [] };
   if (![fotos.veiculo, fotos.hospedagem, fotos.destino].every(Array.isArray)) campos.fotos = 'Fotos inválidas';
   for (const lista of Object.values(fotos) as any[]) {
-    if (Array.isArray(lista) && lista.some((x) => !/^https:\/\//.test(String(x?.url ?? '')))) campos.fotos = 'Toda foto precisa de URL https://';
+    if (Array.isArray(lista) && lista.some((x) => { const u = String(x?.url ?? ''); return !/^https:\/\/\S+$/.test(u) && !REGEX_URL_FOTO.test(u); })) campos.fotos = 'Foto inválida: envie um arquivo ou use um link https://';
   }
   if (Object.keys(campos).length) return { ok: false, campos };
   return {
@@ -283,6 +284,20 @@ admin.put('/viagens/:id', async (c) => {
     ...(antes.ativa !== v.ativa ? { a_venda: !!v.ativa } : {}),
   });
   return c.json({ ok: true, data: { id } });
+});
+
+// ---------------------------------------------------------------------------
+// Fotos (upload do computador). O navegador reduz a imagem antes de enviar.
+// ---------------------------------------------------------------------------
+admin.post('/fotos', exigir('viagens.editar'), async (c) => {
+  const tamanho = Number(c.req.header('Content-Length') ?? 0);
+  if (tamanho > 2_000_000) return c.json(falha('MUITO_GRANDE', 'Imagem grande demais (máx. 1,8 MB depois de reduzida)'), 413);
+  let nome: string | null = null;
+  try { nome = decodeURIComponent(c.req.header('X-Nome-Arquivo') ?? '') || null; } catch { /* nome opcional */ }
+  const r = await salvarFoto(c.env, await c.req.arrayBuffer(), nome, c.get('u').id);
+  if (!r.ok) return c.json(falha('FOTO_INVALIDA', r.mensagem), r.status);
+  await registrar(c, 'foto_enviada', r.id, { tamanho: r.tamanho });
+  return c.json({ ok: true, data: { url: r.url } }, 201);
 });
 
 // ---------------------------------------------------------------------------

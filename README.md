@@ -23,6 +23,8 @@ src/crypto.ts            cifragem de CPF/RG (LGPD)
 src/whatsapp.ts          voucher pela WhatsApp Cloud API
 migrations/0001_init.sql schema do D1 (viagens, passageiros, reservas, pagamentos)
 migrations/0002_usuarios.sql usuários, sessões e auditoria do painel
+migrations/0003_fotos.sql    fotos enviadas pelo painel
+src/fotos.ts             upload e entrega das fotos (D1 ou R2)
 seed/viagem-exemplo.sql  viagem de exemplo
 scripts/teste-e2e.mjs    testes ponta a ponta (39 verificações)
 scripts/configurar-segredos.mjs  configura chaves e master em um passo
@@ -59,7 +61,7 @@ O banco D1 `apollo-reservas-db` **já foi criado na sua conta**, com as tabelas 
 ```bash
 npm install
 npx wrangler login
-node scripts/configurar-segredos.mjs homologacao   # gera as chaves e pede usuário/senha do master
+node scripts/configurar-segredos.mjs homologacao   # gera as chaves e pede usuário/senha do master (no Git Bash a senha fica visível ao digitar)
 npx wrangler deploy --env homologacao
 ```
 
@@ -136,6 +138,14 @@ npx wrangler deploy --env production
 1. Acesse `/admin` com o master, crie os usuários da equipe e a viagem (ou rode o `seed` com `--remote --env production` e edite).
 2. Faça uma reserva de verdade com valor baixo, pague o Pix e confira: tela confirmada, WhatsApp recebido, passageiro na lista ANTT/DER.
 
+## Fotos das viagens
+
+No painel, em **Editar** viagem, cada categoria (Ônibus, Hospedagem, Destino) tem uma área para **arrastar fotos** ou o botão **Escolher fotos** (no celular abre a galeria/câmera). Antes do envio o navegador reduz cada imagem para no máximo 1920 px e cerca de 200–400 KB (WebP), então fotos de 5–10 MB do celular sobem rápido. Dá para pôr legenda, mudar a ordem (◀ ▶) e remover; a 1ª foto de **Destino** vira a capa da página. As fotos entram no site quando você clica em **Salvar**. Links `https://` de imagens externas continuam aceitos ("Usar link da internet").
+
+Armazenamento: as fotos ficam no próprio banco D1 (cabem milhares de fotos reduzidas no plano gratuito). Para volumes maiores, ative o **R2** no painel da Cloudflare, crie o bucket `apollo-fotos` e descomente os blocos `r2_buckets` no `wrangler.toml` — as novas fotos passam a ir para o R2 automaticamente; as antigas continuam funcionando.
+
+Formatos: JPG, PNG e WebP. Fotos HEIC do iPhone funcionam no Safari; em outros navegadores, converta para JPG (ou ajuste o iPhone em *Ajustes → Câmera → Formatos → Mais Compatível*).
+
 ## Acesso ao painel: master, usuários e permissões
 
 - **Master** (um só): tem todas as permissões e é o **único** que cria usuários, define permissões, desativa e redefine senhas. É criado no primeiro login, a partir dos segredos `MASTER_USUARIO` e `MASTER_SENHA`; depois disso esses segredos são ignorados (pode apagá-los com `npx wrangler secret delete MASTER_SENHA --env <ambiente>`). O master troca a própria senha em **seu nome → Minha senha**.
@@ -186,6 +196,8 @@ No painel, **Lista ANTT/DER** em cada viagem gera a relação de passageiros con
 | `POST /api/admin/logout`, `GET /api/admin/me`, `POST /api/admin/me/senha` | sessão | Sair, dados do usuário, trocar a própria senha |
 | `GET/POST /api/admin/usuarios`, `PUT /api/admin/usuarios/:id`, `POST /api/admin/usuarios/:id/senha` | master | Gestão de usuários e permissões |
 | `GET /api/admin/auditoria` | `auditoria.ver` | Registro de atividades |
+| `POST /api/admin/fotos` | `viagens.editar` | Envio de foto (corpo = imagem) → URL `/fotos/<id>.<ext>` |
+| `GET /fotos/<id>.<ext>` | público, cache longo | Entrega da foto |
 | `GET/POST /api/admin/viagens` | sessão / `viagens.editar` | Lista / cria viagens |
 | `GET/PUT /api/admin/viagens/:id` | `viagens.editar` e/ou `precos.alterar` | Lê / altera viagem e preços |
 | `GET /api/admin/viagens/:id/reservas` | `reservas.ver` | Reservas da viagem |

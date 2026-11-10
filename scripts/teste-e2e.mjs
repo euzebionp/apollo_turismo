@@ -116,6 +116,26 @@ ok(r.json.data?.estornar === true, 'Cancelar reserva paga → marca para estorno
 r = await admin('/pendencias');
 ok(r.json.data.some((x) => x.reserva_id === confirmada.id), 'Pendência de estorno aparece no painel');
 
+// 13a) fotos enviadas do computador
+const PNG_1PX = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+const enviarFoto = (corpo, tipo, token = ADMIN) => fetch(`${BASE}/api/admin/fotos`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': tipo, 'X-Nome-Arquivo': encodeURIComponent('ônibus 1.png') }, body: corpo }).then(async (res) => ({ status: res.status, json: await res.json() }));
+r = await enviarFoto(PNG_1PX, 'image/png');
+ok(r.status === 201 && /^\/fotos\/[0-9a-f]{32}\.png$/.test(r.json.data?.url), `Upload de foto retorna URL própria (${r.json.data?.url})`);
+const urlFoto = r.json.data.url;
+const foto = await fetch(BASE + urlFoto);
+const bytesFoto = Buffer.from(await foto.arrayBuffer());
+ok(foto.status === 200 && foto.headers.get('content-type') === 'image/png' && bytesFoto.equals(PNG_1PX), 'Foto é entregue publicamente, idêntica ao enviado');
+ok((foto.headers.get('cache-control') || '').includes('immutable'), 'Foto com cache longo');
+r = await enviarFoto(Buffer.from('<script>alert(1)</script>'), 'image/png');
+ok(r.status === 400, 'Arquivo que não é imagem (mesmo com Content-Type de imagem) é recusado');
+ok((await fetch(`${BASE}/fotos/${'0'.repeat(32)}.png`)).status === 404, 'Foto inexistente → 404');
+const vf = (await admin(`/viagens/${viagemId}`)).json.data;
+r = await admin(`/viagens/${viagemId}`, { method: 'PUT', body: { ...vf, fotos: { ...vf.fotos, destino: [{ url: urlFoto, legenda: 'Capa enviada' }] } } });
+ok(r.status === 200, 'Viagem aceita foto enviada (/fotos/...)');
+ok((await req(`/api/viagem/${viagemId}`)).json.data.fotos.destino[0].url === urlFoto, 'Página pública usa a foto enviada como capa');
+r = await admin(`/viagens/${viagemId}`, { method: 'PUT', body: { ...vf, fotos: { ...vf.fotos, destino: [{ url: 'http://inseguro.com/x.jpg', legenda: '' }] } } });
+ok(r.status === 400, 'Link http:// (sem s) continua recusado');
+
 // 13) usuários e permissões
 const opUsuario = `op.${sufixo}`;
 r = await admin('/usuarios', { method: 'POST', body: { usuario: opUsuario, nome: 'Operador Teste', senha: 'Provisoria2026', permissoes: ['reservas.ver'] } });
@@ -137,6 +157,7 @@ const atual = (await admin(`/viagens/${viagemId}`)).json.data;
 r = await op(`/viagens/${viagemId}`, { method: 'PUT', body: { ...atual, preco_sinal_centavos: 17000 } });
 ok(r.status === 403, 'Operador NÃO altera preço');
 ok((await op('/usuarios')).status === 403, 'Operador NÃO gerencia usuários');
+ok((await enviarFoto(PNG_1PX, 'image/png', login.json.data.token)).status === 403, 'Operador sem "viagens.editar" NÃO envia fotos');
 r = await admin(`/usuarios/${opId}`, { method: 'PUT', body: { nome: 'Operador Teste', permissoes: ['reservas.ver', 'precos.alterar'], ativo: true } });
 ok(r.status === 200, 'Master concede "precos.alterar"');
 r = await op(`/viagens/${viagemId}`, { method: 'PUT', body: { ...atual, preco_sinal_centavos: 19000 } });

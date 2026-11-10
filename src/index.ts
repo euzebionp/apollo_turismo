@@ -5,6 +5,7 @@ import { validarReserva } from './validacao';
 import { criarReserva, enviarOuEnfileirar, expirarPendentes, processarWebhook, verificarTurnstile } from './reservas';
 import { enviarConfirmacaoWhatsApp, codigoReserva } from './whatsapp';
 import admin from './admin';
+import { servirFoto } from './fotos';
 import { agoraISO, log } from './util';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -137,7 +138,9 @@ app.route('/api/admin', admin);
 
 app.all('/api/*', (c) => c.json({ ok: false, erro: { codigo: 'ROTA_INEXISTENTE', mensagem: 'Rota não encontrada' } }, 404));
 
-// Tudo que não é /api/* vem dos static assets (index.html, admin.html).
+app.get('/fotos/*', (c) => servirFoto(c.env, c.req.raw, c.executionCtx));
+
+// Tudo que não é /api/* nem /fotos/* vem dos static assets (index.html, admin.html).
 app.all('*', (c) => c.env.ASSETS.fetch(c.req.raw));
 
 export default {

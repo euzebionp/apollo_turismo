@@ -8,7 +8,13 @@ compatibility_flags = ["nodejs_compat"]
 directory = "./public"
 binding = "ASSETS"
 not_found_handling = "single-page-application"   # /viagem/<id> também abre o index.html
-run_worker_first = ["/api/*"]
+run_worker_first = ["/api/*", "/fotos/*"]
+
+# Fotos: ficam no D1 por padrão. Para usar o R2 (recomendado com muitas fotos), ative o R2 no painel,
+# crie o bucket "apollo-fotos" e descomente os blocos [[r2_buckets]] / [[env.*.r2_buckets]].
+# [[r2_buckets]]
+# binding = "FOTOS"
+# bucket_name = "apollo-fotos"
 
 [observability]
 enabled = true

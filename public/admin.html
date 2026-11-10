@@ -98,8 +98,22 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--noite);b
 .dia-ed .topo{display:flex;gap:8px;align-items:center;margin-bottom:.6rem}
 .dia-ed .topo b{flex:none;font-family:var(--display);width:52px}
 .item-ed{display:grid;grid-template-columns:90px 1fr auto;gap:6px;margin-bottom:6px}
-.foto-ed{display:grid;grid-template-columns:56px 1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px}
-.foto-ed img{width:56px;height:42px;object-fit:cover;border-radius:8px;background:#eee}
+.grade-fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.foto-card{border:1px solid var(--linha);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.foto-card .thumb{position:relative;aspect-ratio:4/3;background:#efebe3}
+.foto-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-card .selo-capa{position:absolute;top:6px;left:6px;background:var(--sol);color:var(--noite);font-size:.7rem;font-weight:800;padding:.1rem .45rem;border-radius:6px;text-transform:uppercase}
+.foto-card .estado{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,33,61,.55);color:#fff;font-size:.82rem;font-weight:600;text-align:center;padding:8px}
+.foto-card .estado.erro{background:rgba(185,28,28,.8)}
+.foto-card input{border:0;border-top:1px solid var(--linha);border-radius:0;font-size:.85rem;padding:.5rem .6rem}
+.foto-card .barra-acoes{display:flex;border-top:1px solid var(--linha)}
+.foto-card .barra-acoes button{flex:1;border:0;background:#fff;padding:.4rem;color:var(--tinta-2);font-size:.85rem}
+.foto-card .barra-acoes button:hover:not([disabled]){background:#f6f3ec;color:var(--tinta)}
+.foto-card .barra-acoes button+button{border-left:1px solid var(--linha)}
+.soltar{border:2px dashed var(--linha);border-radius:12px;padding:1rem;text-align:center;color:var(--tinta-2);font-size:.88rem;transition:border-color .15s,background .15s}
+.soltar.ativo{border-color:var(--sol);background:#fffbeb}
+.soltar .btn{margin:.4rem .2rem 0}
+.soltar small{display:block;margin-top:.4rem;font-size:.78rem}
 .cat{margin-bottom:1rem}
 .cat h3{font-size:.9rem;margin:.2rem 0 .5rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2)}
 .x{border:0;background:#f1ede4;border-radius:8px;width:34px;height:34px;color:var(--tinta-2)}
@@ -379,7 +393,7 @@ header nav{overflow-x:auto}
           </div>
           <div class="cartao bloco" style="margin-top:16px">
             <h2>Fotos</h2>
-            <p class="sub" style="margin:-.6rem 0 1rem;font-size:.86rem">Use links https:// das imagens (ex.: bucket R2 público ou Cloudflare Images).</p>
+            <p class="sub" style="margin:-.6rem 0 1rem;font-size:.86rem">Arraste fotos do computador ou toque em <b>Escolher fotos</b>. Elas são reduzidas automaticamente e entram na página quando você <b>salvar</b>.</p>
             <div id="fotos"></div>
             <div class="campo" data-campo="fotos"><div class="msg"></div></div>
           </div>
@@ -406,17 +420,97 @@ header nav{overflow-x:auto}
           <button class="btn btn-borda btn-mini" type="button" data-add-item="${i}">+ Horário</button>
         </div>`).join('') || '<p class="sub">Nenhum dia cadastrado.</p>';
     }
+    const CATS = [['veiculo', 'Ônibus'], ['hospedagem', 'Hospedagem'], ['destino', 'Destino']];
+    let enviando = 0;
+    function atualizarSalvar() { const b = $('#salvar'); if (b) { b.disabled = enviando > 0; b.textContent = enviando > 0 ? `Enviando ${enviando} foto(s)…` : (criando ? 'Criar viagem' : 'Salvar alterações'); } }
     function renderFotos() {
-      $('#fotos').innerHTML = [['veiculo', 'Ônibus'], ['hospedagem', 'Hospedagem'], ['destino', 'Destino (a 1ª vira a capa)']].map(([k, n]) => `
-        <div class="cat"><h3>${n}</h3>
-          ${fotos[k].map((f, i) => `<div class="foto-ed">
-            <img src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
-            <input type="url" data-cat="${k}" data-i="${i}" data-k="url" value="${esc(f.url)}" placeholder="https://…">
-            <input type="text" data-cat="${k}" data-i="${i}" data-k="legenda" value="${esc(f.legenda)}" placeholder="Legenda">
-            <button class="x" type="button" data-rm-foto="${k}:${i}" aria-label="Remover foto">×</button></div>`).join('')}
-          <button class="btn btn-borda btn-mini" type="button" data-add-foto="${k}">+ Foto</button>
+      $('#fotos').innerHTML = CATS.map(([k, n]) => `
+        <div class="cat" data-zona="${k}"><h3>${n}${k === 'destino' ? ' <small style="text-transform:none;letter-spacing:0;font-weight:500">(a 1ª vira a capa da página)</small>' : ''}</h3>
+          ${fotos[k].length ? `<div class="grade-fotos">${fotos[k].map((f, i) => `
+            <div class="foto-card">
+              <div class="thumb">
+                <img src="${esc(f._previa || f.url)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+                ${k === 'destino' && i === 0 ? '<span class="selo-capa">Capa</span>' : ''}
+                ${f._enviando ? '<div class="estado">Enviando…</div>' : ''}
+                ${f._erro ? `<div class="estado erro">${esc(f._erro)}</div>` : ''}
+              </div>
+              <input type="text" data-cat="${k}" data-i="${i}" data-k="legenda" value="${esc(f.legenda)}" placeholder="Legenda (opcional)" maxlength="120" ${f._erro ? 'disabled' : ''}>
+              <div class="barra-acoes">
+                <button type="button" data-mover="${k}:${i}:-1" ${i === 0 || f._enviando ? 'disabled' : ''} aria-label="Mover para a esquerda" title="Mover para a esquerda">◀</button>
+                <button type="button" data-mover="${k}:${i}:1" ${i === fotos[k].length - 1 || f._enviando ? 'disabled' : ''} aria-label="Mover para a direita" title="Mover para a direita">▶</button>
+                <button type="button" data-rm-foto="${k}:${i}" ${f._enviando ? 'disabled' : ''} aria-label="Remover foto" title="Remover">✕</button>
+              </div>
+            </div>`).join('')}</div>` : ''}
+          ${pode('viagens.editar') ? `<div class="soltar" data-soltar="${k}">
+            Arraste as fotos aqui<br>
+            <label class="btn btn-noite btn-mini" style="cursor:pointer">Escolher fotos<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/*" multiple hidden data-arquivos="${k}"></label>
+            <button class="btn btn-borda btn-mini" type="button" data-link-foto="${k}">Usar link da internet</button>
+            <small>JPG, PNG ou WebP · várias de uma vez</small>
+          </div>` : ''}
         </div>`).join('');
+      atualizarSalvar();
     }
+
+    // Reduz a imagem no navegador: máx. 1920 px no lado maior, WebP (ou JPEG), até ~1,5 MB.
+    async function carregarImagem(arquivo) {
+      try { return await createImageBitmap(arquivo, { imageOrientation: 'from-image' }); } catch {}
+      return new Promise((ok, erro) => {
+        const img = new Image(), u = URL.createObjectURL(arquivo);
+        img.onload = () => { URL.revokeObjectURL(u); ok(img); };
+        img.onerror = () => { URL.revokeObjectURL(u); erro(new Error('formato')); };
+        img.src = u;
+      });
+    }
+    async function reduzir(arquivo) {
+      const img = await carregarImagem(arquivo);
+      const w = img.width, h = img.height, escala = Math.min(1, 1920 / Math.max(w, h));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(w * escala); canvas.height = Math.round(h * escala);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const gerar = (tipo, q) => new Promise((ok) => canvas.toBlob(ok, tipo, q));
+      let tipo = 'image/webp', q = 0.82, blob = await gerar(tipo, q);
+      if (!blob || blob.type !== 'image/webp') { tipo = 'image/jpeg'; blob = await gerar(tipo, 0.85); q = 0.85; }
+      while (blob && blob.size > 1_500_000 && q > 0.4) { q -= 0.1; blob = await gerar(tipo, q); }
+      if (!blob) throw new Error('falha');
+      return blob;
+    }
+    async function enviarArquivos(cat, lista) {
+      const arquivos = [...lista].filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+      if (!arquivos.length) return toast('Selecione arquivos de imagem.', true);
+      const itens = arquivos.map((a) => ({ url: '', legenda: '', _enviando: true, _previa: URL.createObjectURL(a), _arquivo: a }));
+      fotos[cat].push(...itens);
+      enviando += itens.length;
+      renderFotos();
+      for (const item of itens) {
+        try {
+          let blob;
+          try { blob = await reduzir(item._arquivo); }
+          catch { throw new Error(/\.(heic|heif)$/i.test(item._arquivo.name) ? 'HEIC não suportado neste navegador. Converta para JPG.' : 'Não foi possível ler esta imagem'); }
+          const res = await fetch('/api/admin/fotos', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${sess.get()}`, 'Content-Type': blob.type, 'X-Nome-Arquivo': encodeURIComponent(item._arquivo.name) },
+            body: blob,
+          });
+          if (res.status === 401) { sess.del(); mostrarLogin('Sessão expirada. Entre novamente.'); return; }
+          const json = await res.json().catch(() => ({}));
+          if (!json.ok) throw new Error(json.erro?.mensagem || 'Falha no envio');
+          item.url = json.data.url;
+        } catch (err) {
+          item._erro = err.message;
+        } finally {
+          item._enviando = false;
+          delete item._arquivo;
+          enviando--;
+          if ($('#fotos')) renderFotos();
+        }
+      }
+      const erros = itens.filter((i) => i._erro).length;
+      if (erros) toast(`${erros} foto(s) não foram enviadas. Remova-as e tente de novo.`, true);
+      else toast(`${itens.length} foto(s) enviada(s). Clique em salvar para publicar.`);
+    }
+
     renderDias(); renderFotos();
     if (!pode('viagens.editar')) {
       $$('#form-viagem input, #form-viagem textarea, #form-viagem button').forEach((el) => {
@@ -436,21 +530,43 @@ header nav{overflow-x:auto}
       if (t.id === 'e-titulo' && criando && !$('#e-id').dataset.mexido) { $('#e-id').value = slug(t.value); $('#e-id-prev').textContent = $('#e-id').value || '…'; }
       if (t.id === 'e-id') { t.dataset.mexido = '1'; t.value = slug(t.value); $('#e-id-prev').textContent = t.value || '…'; }
     });
-    form.addEventListener('change', (e) => { if (e.target.dataset.cat && e.target.dataset.k === 'url') renderFotos(); });
+    form.addEventListener('change', (e) => {
+      const t = e.target;
+      if (t.dataset.arquivos && t.files?.length) { enviarArquivos(t.dataset.arquivos, t.files); t.value = ''; }
+    });
+    const zonaDe = (e) => e.target.closest?.('[data-soltar]');
+    form.addEventListener('dragover', (e) => { const z = zonaDe(e); if (z && pode('viagens.editar')) { e.preventDefault(); z.classList.add('ativo'); } });
+    form.addEventListener('dragleave', (e) => { const z = zonaDe(e); if (z) z.classList.remove('ativo'); });
+    form.addEventListener('drop', (e) => {
+      const z = zonaDe(e); if (!z) return;
+      e.preventDefault(); z.classList.remove('ativo');
+      if (pode('viagens.editar') && e.dataTransfer?.files?.length) enviarArquivos(z.dataset.soltar, e.dataTransfer.files);
+    });
     form.addEventListener('click', (e) => {
       const t = e.target.closest('button'); if (!t) return;
       if (t.id === 'add-dia') { prog.push({ dia: prog.length + 1, titulo: '', itens: [{ hora: '', atividade: '' }] }); renderDias(); }
       if (t.dataset.rmDia) { prog.splice(+t.dataset.rmDia, 1); renderDias(); }
       if (t.dataset.addItem) { prog[+t.dataset.addItem].itens.push({ hora: '', atividade: '' }); renderDias(); }
       if (t.dataset.rmItem) { const [i, j] = t.dataset.rmItem.split(':').map(Number); prog[i].itens.splice(j, 1); renderDias(); }
-      if (t.dataset.addFoto) { fotos[t.dataset.addFoto].push({ url: '', legenda: '' }); renderFotos(); }
-      if (t.dataset.rmFoto) { const [k, i] = t.dataset.rmFoto.split(':'); fotos[k].splice(+i, 1); renderFotos(); }
+      if (t.dataset.linkFoto) {
+        const url = (prompt('Cole o link da imagem (começando com https://):') || '').trim();
+        if (!url) return;
+        if (!/^https:\/\/\S+$/.test(url)) return toast('O link precisa começar com https://', true);
+        fotos[t.dataset.linkFoto].push({ url, legenda: '' }); renderFotos();
+      }
+      if (t.dataset.rmFoto) { const [k, i] = t.dataset.rmFoto.split(':'); const [f] = fotos[k].splice(+i, 1); if (f?._previa) URL.revokeObjectURL(f._previa); renderFotos(); }
+      if (t.dataset.mover) {
+        const [k, i, d] = t.dataset.mover.split(':'); const a = +i, b = a + +d;
+        if (b < 0 || b >= fotos[k].length) return;
+        [fotos[k][a], fotos[k][b]] = [fotos[k][b], fotos[k][a]]; renderFotos();
+      }
     });
     $('#voltar').addEventListener('click', () => navegar('viagens'));
     $('#cancelar').addEventListener('click', () => navegar('viagens'));
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (enviando > 0) return toast('Aguarde o envio das fotos terminar.', true);
       const partida = $('#e-partida').value, retorno = $('#e-retorno').value;
       const payload = {
         id: criando ? $('#e-id').value : v.id,
@@ -465,7 +581,7 @@ header nav{overflow-x:auto}
         preco_integral_centavos: centavos($('#e-integral').value),
         ativa: $('#e-ativa').checked,
         programacao: prog.map((d, i) => ({ dia: i + 1, titulo: d.titulo.trim(), itens: (d.itens || []).filter((it) => it.atividade.trim()).map((it) => ({ hora: it.hora.trim(), atividade: it.atividade.trim() })) })).filter((d) => d.titulo || d.itens.length),
-        fotos: Object.fromEntries(Object.entries(fotos).map(([k, l]) => [k, l.filter((f) => f.url.trim()).map((f) => ({ url: f.url.trim(), legenda: (f.legenda || '').trim() }))])),
+        fotos: Object.fromEntries(Object.entries(fotos).map(([k, l]) => [k, l.filter((f) => f.url && !f._erro).map((f) => ({ url: f.url.trim(), legenda: (f.legenda || '').trim() }))])),
       };
       // aviso de mudança de preço
       if (!criando && (payload.preco_integral_centavos !== v.preco_integral_centavos || payload.preco_sinal_centavos !== v.preco_sinal_centavos)) {
