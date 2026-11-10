@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel — Apollo Turismo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noite:#14213d; --noite-2:#1d2f55; --sol:#f59e0b; --sol-escuro:#c2410c; --fundo:#f5f3ee;
+  --tinta:#1b1f2a; --tinta-2:#5b6272; --linha:#e5e0d6; --ok:#15803d; --erro:#b91c1c; --aviso:#b45309;
+  --display:'Bricolage Grotesque',system-ui,sans-serif; --texto:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--texto);background:var(--fundo);color:var(--tinta);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.wrap{width:min(1200px,100% - 32px);margin-inline:auto}
+header{background:var(--noite);color:#fff}
+header .wrap{display:flex;align-items:center;gap:1.5rem;height:60px}
+.marca{font-family:var(--display);font-weight:800;font-size:1.15rem}
+.marca span{color:var(--sol)}
+nav{display:flex;gap:4px;margin-left:auto}
+nav button{border:0;background:transparent;color:#c6cde0;padding:.5rem .9rem;border-radius:10px;font-weight:600}
+nav button[aria-current="page"]{background:rgba(255,255,255,.12);color:#fff}
+nav .badge{background:var(--sol);color:var(--noite);border-radius:999px;padding:0 .45rem;font-size:.75rem;margin-left:.3rem}
+.sair{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:10px;padding:.4rem .8rem}
+main{padding:28px 0 60px}
+h1{font-family:var(--display);font-weight:800;font-size:1.8rem;letter-spacing:-.02em;margin:0}
+h2{font-family:var(--display);font-size:1.25rem;margin:0}
+.cabeca{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.sub{color:var(--tinta-2);margin:.2rem 0 0}
+.btn{border:0;border-radius:12px;padding:.65rem 1rem;font-weight:600;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;white-space:nowrap}
+.btn-sol{background:var(--sol);color:var(--noite)}
+.btn-noite{background:var(--noite);color:#fff}
+.btn-borda{background:#fff;border:1px solid var(--linha);color:var(--tinta)}
+.btn-perigo{background:#fff;border:1px solid #fecaca;color:var(--erro)}
+.btn-mini{padding:.35rem .65rem;font-size:.85rem;border-radius:9px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.cartao{background:#fff;border:1px solid var(--linha);border-radius:16px}
+.resumo-num{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1.25rem}
+.resumo-num .cartao{padding:1rem 1.1rem}
+.resumo-num small{color:var(--tinta-2);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.resumo-num strong{display:block;font-family:var(--display);font-size:1.6rem}
+.tabela-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:.75rem .9rem;border-bottom:1px solid var(--linha);vertical-align:middle}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2);font-weight:600;background:#faf8f4}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.acoes{display:flex;gap:6px;flex-wrap:wrap}
+.titulo-viagem{font-weight:600}
+.titulo-viagem small{display:block;color:var(--tinta-2);font-weight:400}
+.ocup{min-width:140px}
+.ocup .barra{height:8px;background:#efebe3;border-radius:99px;overflow:hidden;margin-top:4px}
+.ocup .barra i{display:block;height:100%;background:var(--sol)}
+.pill{display:inline-block;white-space:nowrap;font-size:.75rem;font-weight:700;padding:.15rem .55rem;border-radius:99px;letter-spacing:.02em}
+.p-CONFIRMADO,.p-APROVADO,.p-ativa{background:#dcfce7;color:var(--ok)}
+.p-PENDENTE,.p-AGUARDANDO{background:#fef3c7;color:var(--aviso)}
+.p-EXPIRADO,.p-CANCELADO,.p-inativa{background:#f1f5f9;color:#475569}
+.p-ESTORNAR,.p-DIVERGENTE{background:#fee2e2;color:var(--erro)}
+.p-ESTORNADO{background:#e0e7ff;color:#3730a3}
+.vazio{padding:2rem;text-align:center;color:var(--tinta-2)}
+.voltar{border:0;background:none;color:var(--tinta-2);padding:0;margin-bottom:.5rem;font-weight:600}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+select,input[type=text],input[type=number],input[type=datetime-local],input[type=url],input[type=password],textarea{border:1px solid var(--linha);border-radius:10px;padding:.6rem .75rem;background:#fff;color:var(--tinta);width:100%}
+select{width:auto}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--noite);box-shadow:0 0 0 3px rgba(20,33,61,.1)}
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.login .cartao{width:min(400px,100%);padding:2rem}
+.login h1{margin-bottom:.4rem}
+.login label{display:block;font-weight:600;margin:1.2rem 0 .35rem}
+.login .btn{width:100%;justify-content:center;margin-top:1rem}
+.erro{color:var(--erro);font-size:.88rem;margin-top:.5rem;min-height:1.2em}
+/* editor */
+.editor{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:960px){.editor{grid-template-columns:1.1fr 1fr}}
+.bloco{padding:1.25rem}
+.bloco h2{margin-bottom:1rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.campo{margin-bottom:.9rem}
+.campo label{display:block;font-weight:600;font-size:.88rem;margin-bottom:.3rem}
+.campo .ajuda{font-size:.8rem;color:var(--tinta-2);margin-top:.25rem}
+.campo[data-erro] input,.campo[data-erro] textarea{border-color:var(--erro)}
+.campo .msg{color:var(--erro);font-size:.8rem;margin-top:.25rem;display:none}
+.campo[data-erro] .msg{display:block}
+.moeda{position:relative}
+.moeda span{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--tinta-2)}
+.moeda input{padding-left:2.3rem}
+.toggle{display:flex;align-items:center;gap:.6rem;font-weight:600}
+.toggle input{width:20px;height:20px}
+.dia-ed{border:1px solid var(--linha);border-radius:12px;padding:.8rem;margin-bottom:10px;background:#fcfbf8}
+.dia-ed .topo{display:flex;gap:8px;align-items:center;margin-bottom:.6rem}
+.dia-ed .topo b{flex:none;font-family:var(--display);width:52px}
+.item-ed{display:grid;grid-template-columns:90px 1fr auto;gap:6px;margin-bottom:6px}
+.grade-fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.foto-card{border:1px solid var(--linha);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.foto-card .thumb{position:relative;aspect-ratio:4/3;background:#efebe3}
+.foto-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-card .selo-capa{position:absolute;top:6px;left:6px;background:var(--sol);color:var(--noite);font-size:.7rem;font-weight:800;padding:.1rem .45rem;border-radius:6px;text-transform:uppercase}
+.foto-card .estado{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,33,61,.55);color:#fff;font-size:.82rem;font-weight:600;text-align:center;padding:8px}
+.foto-card .estado.erro{background:rgba(185,28,28,.8)}
+.foto-card input{border:0;border-top:1px solid var(--linha);border-radius:0;font-size:.85rem;padding:.5rem .6rem}
+.foto-card .barra-acoes{display:flex;border-top:1px solid var(--linha)}
+.foto-card .barra-acoes button{flex:1;border:0;background:#fff;padding:.4rem;color:var(--tinta-2);font-size:.85rem}
+.foto-card .barra-acoes button:hover:not([disabled]){background:#f6f3ec;color:var(--tinta)}
+.foto-card .barra-acoes button+button{border-left:1px solid var(--linha)}
+.soltar{border:2px dashed var(--linha);border-radius:12px;padding:1rem;text-align:center;color:var(--tinta-2);font-size:.88rem;transition:border-color .15s,background .15s}
+.soltar.ativo{border-color:var(--sol);background:#fffbeb}
+.soltar .btn{margin:.4rem .2rem 0}
+.soltar small{display:block;margin-top:.4rem;font-size:.78rem}
+.cat{margin-bottom:1rem}
+.cat h3{font-size:.9rem;margin:.2rem 0 .5rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2)}
+.x{border:0;background:#f1ede4;border-radius:8px;width:34px;height:34px;color:var(--tinta-2)}
+.barra-salvar{position:sticky;bottom:0;background:rgba(245,243,238,.95);backdrop-filter:blur(6px);padding:12px 0;margin-top:16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--linha)}
+.aviso-box{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:.75rem 1rem;font-size:.88rem;color:#78350f;margin-bottom:1rem}
+/* manifesto */
+.colunas{display:flex;flex-wrap:wrap;gap:8px 16px;margin:.5rem 0 1rem}
+.colunas label{display:flex;gap:.4rem;align-items:center;font-size:.9rem}
+.toast{opacity:0;visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--noite);color:#fff;padding:.75rem 1.1rem;border-radius:12px;font-weight:600;transition:transform .25s;z-index:50;max-width:calc(100% - 32px)}
+.toast.visivel{transform:translateX(-50%);opacity:1;visibility:visible}
+.toast.erro{background:var(--erro)}
+[hidden]{display:none!important}
+.perms{display:grid;gap:8px;margin:.4rem 0 1rem}
+.perms label{display:flex;gap:.6rem;align-items:flex-start;padding:.6rem .75rem;border:1px solid var(--linha);border-radius:10px;cursor:pointer;font-size:.92rem}
+.perms label:has(input:checked){border-color:var(--noite);background:#f3f5fa}
+.perms input{margin-top:.2rem;width:18px;height:18px;flex:none}
+.perms code{display:block;font-size:.75rem;color:var(--tinta-2)}
+.p-MASTER{background:var(--noite);color:#fff}.p-OPERADOR{background:#eef2ff;color:#3730a3}
+.chips-perm{display:flex;flex-wrap:wrap;gap:4px}.chips-perm span{font-size:.72rem;background:#f1ede4;border-radius:6px;padding:.1rem .4rem}
+.modal-fundo{position:fixed;inset:0;background:rgba(20,33,61,.5);display:grid;place-items:center;z-index:40;padding:16px}
+.modal-fundo .cartao{width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:1.4rem}
+.estreito{max-width:440px}
+header nav{overflow-x:auto}
+@media(max-width:820px){header .wrap{height:auto;flex-wrap:wrap;padding:10px 0;gap:.6rem}nav{margin-left:0;order:3;width:100%}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="tela-login">
+  <form class="cartao" id="form-login">
+    <div class="marca" style="color:var(--noite)">Apollo <span>Turismo</span></div>
+    <h1 style="margin-top:1rem">Painel administrativo</h1>
+    <p class="sub">Acesso restrito à equipe da agência.</p>
+    <label for="login-usuario">Usuário</label>
+    <input type="text" id="login-usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+    <label for="login-senha">Senha</label>
+    <input type="password" id="login-senha" autocomplete="current-password" required>
+    <div class="erro" id="login-erro" role="alert"></div>
+    <button class="btn btn-noite" type="submit">Entrar</button>
+  </form>
+</div>
+
+<!-- APP -->
+<div id="tela-app" hidden>
+  <header>
+    <div class="wrap">
+      <div class="marca">Apollo <span>Turismo</span> · Painel</div>
+      <nav>
+        <button type="button" data-nav="viagens" aria-current="page">Viagens</button>
+        <button type="button" data-nav="pendencias" data-perm="financeiro.ver">Pendências <span class="badge" id="badge-pend" hidden>0</span></button>
+        <button type="button" data-nav="usuarios" data-perm="usuarios.gerenciar">Usuários</button>
+        <button type="button" data-nav="auditoria" data-perm="auditoria.ver">Atividades</button>
+      </nav>
+      <button class="sair" type="button" id="btn-conta" title="Minha senha"><span id="nome-usuario"></span></button>
+      <button class="sair" type="button" id="btn-sair">Sair</button>
+    </div>
+  </header>
+  <main class="wrap" id="conteudo"></main>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const reais = (c) => (Number(c || 0) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const tz = { timeZone: 'America/Sao_Paulo' };
+  const dataHora = (iso) => iso ? new Date(iso).toLocaleString('pt-BR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+  const dataCurta = (iso) => iso ? new Date(iso).toLocaleDateString('pt-BR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+  const sess = {
+    get() { try { return sessionStorage.getItem('apollo_admin') || ''; } catch { return estado.tokenMem || ''; } },
+    set(v) { estado.tokenMem = v; try { sessionStorage.setItem('apollo_admin', v); } catch {} },
+    del() { estado.tokenMem = ''; try { sessionStorage.removeItem('apollo_admin'); } catch {} },
+  };
+  const estado = { tokenMem: '', viagens: [], tela: 'viagens', me: null };
+  const pode = (p) => !!estado.me?.permissoes?.includes(p);
+
+  function toast(msg, erro = false) {
+    const t = $('#toast');
+    t.textContent = msg; t.classList.toggle('erro', erro); t.classList.add('visivel');
+    clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('visivel'), 3200);
+  }
+
+  async function api(path, opts = {}) {
+    const res = await fetch('/api/admin' + path, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sess.get()}`, ...(opts.headers || {}) },
+    });
+    if (res.status === 401) { sess.del(); mostrarLogin('Sessão expirada. Entre novamente.'); throw new Error('401'); }
+    const json = await res.json().catch(() => ({ ok: false, erro: { mensagem: 'Resposta inválida' } }));
+    if (res.status === 403 && json.erro?.codigo === 'TROCAR_SENHA') { telaMinhaSenha(true); throw new Error('TROCAR_SENHA'); }
+    return { status: res.status, json };
+  }
+
+  // ---------- login ----------
+  function mostrarLogin(msg = '') {
+    $('#tela-app').hidden = true; $('#tela-login').hidden = false;
+    $('#login-erro').textContent = msg; $('#login-usuario').focus();
+  }
+  async function entrarNoApp() {
+    const r = await api('/me');
+    if (!r.json.ok) return mostrarLogin();
+    estado.me = r.json.data.usuario;
+    estado.catalogo = r.json.data.catalogo;
+    $('#nome-usuario').textContent = estado.me.nome.split(' ')[0];
+    $$('[data-perm]').forEach((el) => (el.hidden = !pode(el.dataset.perm)));
+    $('#tela-login').hidden = true; $('#tela-app').hidden = false;
+    if (estado.me.trocar_senha) return telaMinhaSenha(true);
+    navegar('viagens');
+  }
+  $('#form-login').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('#login-erro').textContent = '';
+    const btn = $('#form-login button'); btn.disabled = true;
+    try {
+      const res = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario: $('#login-usuario').value, senha: $('#login-senha').value }) });
+      const json = await res.json().catch(() => ({}));
+      if (!json.ok) { $('#login-erro').textContent = json.erro?.mensagem || 'Falha ao entrar'; return; }
+      sess.set(json.data.token);
+      $('#login-senha').value = '';
+      await entrarNoApp();
+    } catch { $('#login-erro').textContent = 'Sem conexão com o servidor.'; }
+    finally { btn.disabled = false; }
+  });
+  $('#btn-sair').addEventListener('click', async () => { await api('/logout', { method: 'POST' }).catch(() => {}); sess.del(); estado.me = null; mostrarLogin(); });
+  $('#btn-conta').addEventListener('click', () => telaMinhaSenha(false));
+
+  $$('[data-nav]').forEach((b) => b.addEventListener('click', () => navegar(b.dataset.nav)));
+  function navegar(tela, arg) {
+    estado.tela = tela;
+    const ativa = ['pendencias', 'usuarios', 'auditoria'].includes(tela) ? tela : 'viagens';
+    $$('[data-nav]').forEach((b) => b.dataset.nav === ativa ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+    if (tela === 'viagens') return telaViagens();
+    if (tela === 'pendencias') return telaPendencias();
+    if (tela === 'editar') return telaEditor(arg);
+    if (tela === 'reservas') return telaReservas(arg);
+    if (tela === 'manifesto') return telaManifesto(arg);
+    if (tela === 'usuarios') return telaUsuarios();
+    if (tela === 'auditoria') return telaAuditoria();
+  }
+
+  async function atualizarBadge() {
+    if (!pode('financeiro.ver')) return;
+    const r = await api('/pendencias').catch(() => null);
+    const n = r?.json?.data?.length || 0;
+    const b = $('#badge-pend'); b.hidden = !n; b.textContent = n;
+  }
+
+  // ---------- viagens ----------
+  async function telaViagens() {
+    const c = $('#conteudo');
+    c.innerHTML = '<p class="vazio">Carregando…</p>';
+    const r = await api('/viagens');
+    const lista = r.json.data || [];
+    estado.viagens = lista;
+    atualizarBadge();
+    const agora = new Date().toISOString();
+    const futuras = lista.filter((v) => v.data_partida > agora);
+    const totalConf = futuras.reduce((s, v) => s + (v.confirmadas || 0), 0);
+    const totalArrec = futuras.reduce((s, v) => s + (v.arrecadado_centavos || 0), 0);
+    const totalVagas = futuras.reduce((s, v) => s + v.total_vagas, 0);
+    c.innerHTML = `
+      <div class="cabeca">
+        <div><h1>Viagens</h1><p class="sub">Cadastre roteiros, ajuste preços e gere as listas de passageiros.</p></div>
+        ${pode('viagens.editar') ? '<button class="btn btn-sol" type="button" id="nova">+ Nova viagem</button>' : ''}
+      </div>
+      <div class="resumo-num">
+        <div class="cartao"><small>Próximas viagens</small><strong>${futuras.length}</strong></div>
+        <div class="cartao"><small>Passageiros confirmados</small><strong>${totalConf} / ${totalVagas}</strong></div>
+        ${pode('financeiro.ver') ? `<div class="cartao"><small>Recebido (próximas)</small><strong>${reais(totalArrec)}</strong></div>` : ''}
+      </div>
+      <div class="cartao tabela-wrap">
+        ${lista.length ? `<table>
+          <thead><tr><th>Viagem</th><th>Partida</th><th>Ocupação</th><th>Sinal</th><th>Integral</th>${pode('financeiro.ver') ? '<th>Recebido</th>' : ''}<th>Status</th><th></th></tr></thead>
+          <tbody>${lista.map((v) => {
+            const ocup = (v.confirmadas || 0) + (v.pendentes || 0);
+            const passada = v.data_partida <= agora;
+            return `<tr>
+              <td class="titulo-viagem">${esc(v.titulo)}<small>${esc(v.destino)} · <code>${esc(v.id)}</code></small></td>
+              <td class="num">${dataHora(v.data_partida)}</td>
+              <td class="ocup"><span class="num"><b>${v.confirmadas || 0}</b>/${v.total_vagas} confirmadas</span>${v.pendentes ? `<small style="display:block;color:var(--aviso)">+${v.pendentes} aguardando Pix</small>` : ''}
+                <div class="barra"><i style="width:${Math.min(100, (ocup / v.total_vagas) * 100)}%"></i></div></td>
+              <td class="num">${reais(v.preco_sinal_centavos)}</td>
+              <td class="num">${reais(v.preco_integral_centavos)}</td>
+              ${pode('financeiro.ver') ? `<td class="num">${reais(v.arrecadado_centavos)}</td>` : ''}
+              <td><span class="pill ${v.ativa ? 'p-ativa' : 'p-inativa'}">${passada ? 'Realizada' : v.ativa ? 'À venda' : 'Pausada'}</span></td>
+              <td><div class="acoes">
+                ${pode('viagens.editar') || pode('precos.alterar') ? `<button class="btn btn-borda btn-mini" data-acao="editar" data-id="${esc(v.id)}">${pode('viagens.editar') ? 'Editar' : 'Preços'}</button>` : ''}
+                ${pode('reservas.ver') ? `<button class="btn btn-borda btn-mini" data-acao="reservas" data-id="${esc(v.id)}">Reservas</button>` : ''}
+                ${pode('manifesto.exportar') ? `<button class="btn btn-noite btn-mini" data-acao="manifesto" data-id="${esc(v.id)}">Lista ANTT/DER</button>` : ''}
+                <a class="btn btn-borda btn-mini" href="/viagem/${esc(v.id)}" target="_blank" rel="noopener">Ver página</a>
+              </div></td>
+            </tr>`; }).join('')}
+          </tbody></table>` : '<p class="vazio">Nenhuma viagem cadastrada ainda.</p>'}
+      </div>`;
+    $('#nova')?.addEventListener('click', () => navegar('editar', null));
+    $$('[data-acao]', c).forEach((b) => b.addEventListener('click', () => navegar(b.dataset.acao, b.dataset.id)));
+  }
+
+  // ---------- editor de viagem ----------
+  const paraInputLocal = (iso) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  };
+  const centavos = (txt) => {
+    const s = String(txt || '').trim().replace(/\./g, '').replace(',', '.');
+    const n = Number(s);
+    return Number.isFinite(n) ? Math.round(n * 100) : NaN;
+  };
+  const paraMoeda = (c) => (c / 100).toFixed(2).replace('.', ',');
+  const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64);
+
+  async function telaEditor(id) {
+    const c = $('#conteudo');
+    let v = { id: '', titulo: '', destino: '', descricao: '', data_partida: '', data_retorno: '', local_embarque: '', total_vagas: 44,
+              preco_integral_centavos: 0, preco_sinal_centavos: 0, ativa: 1, programacao: [{ dia: 1, titulo: '', itens: [{ hora: '', atividade: '' }] }],
+              fotos: { veiculo: [], hospedagem: [], destino: [] } };
+    let ocupacao = null;
+    if (id) {
+      c.innerHTML = '<p class="vazio">Carregando…</p>';
+      const r = await api(`/viagens/${encodeURIComponent(id)}`);
+      if (!r.json.ok) return toast(r.json.erro?.mensagem || 'Erro', true);
+      v = r.json.data;
+      const resumo = estado.viagens.find((x) => x.id === id);
+      if (resumo) ocupacao = (resumo.confirmadas || 0) + (resumo.pendentes || 0);
+    }
+    const criando = !id;
+
+    c.innerHTML = `
+      <button class="voltar" type="button" id="voltar">← Viagens</button>
+      <div class="cabeca"><div><h1>${criando ? 'Nova viagem' : esc(v.titulo)}</h1>
+        ${!criando && ocupacao ? `<p class="sub">${ocupacao} vagas ocupadas. Mudanças de preço valem só para novas reservas.</p>` : ''}</div></div>
+      <form id="form-viagem" novalidate>
+      <div class="editor">
+        <div>
+          <div class="cartao bloco">
+            <h2>Dados da viagem</h2>
+            <div class="campo" data-campo="titulo"><label for="e-titulo">Título</label><input type="text" id="e-titulo" value="${esc(v.titulo)}" maxlength="120"><div class="msg"></div></div>
+            <div class="grid2">
+              <div class="campo" data-campo="destino"><label for="e-destino">Destino</label><input type="text" id="e-destino" value="${esc(v.destino)}" placeholder="Capitólio - MG"><div class="msg"></div></div>
+              <div class="campo" data-campo="id"><label for="e-id">Endereço da página</label><input type="text" id="e-id" value="${esc(v.id)}" ${criando ? '' : 'disabled'} placeholder="capitolio-jan-2027"><div class="ajuda">/viagem/<b id="e-id-prev">${esc(v.id) || '…'}</b></div><div class="msg"></div></div>
+            </div>
+            <div class="campo"><label for="e-desc">Descrição</label><textarea id="e-desc" maxlength="1000">${esc(v.descricao || '')}</textarea></div>
+            <div class="grid2">
+              <div class="campo" data-campo="data_partida"><label for="e-partida">Partida</label><input type="datetime-local" id="e-partida" value="${paraInputLocal(v.data_partida)}"><div class="msg"></div></div>
+              <div class="campo" data-campo="data_retorno"><label for="e-retorno">Retorno</label><input type="datetime-local" id="e-retorno" value="${paraInputLocal(v.data_retorno)}"><div class="msg"></div></div>
+            </div>
+            <div class="campo"><label for="e-embarque">Local de embarque</label><input type="text" id="e-embarque" value="${esc(v.local_embarque || '')}"></div>
+          </div>
+
+          <div class="cartao bloco" style="margin-top:16px">
+            <h2>Vagas e preços</h2>
+            <div class="grid2">
+              <div class="campo" data-campo="preco_sinal_centavos"><label for="e-sinal">Sinal</label><div class="moeda"><span>R$</span><input type="text" inputmode="decimal" id="e-sinal" value="${v.preco_sinal_centavos ? paraMoeda(v.preco_sinal_centavos) : ''}" placeholder="200,00"></div><div class="msg"></div></div>
+              <div class="campo" data-campo="preco_integral_centavos"><label for="e-integral">Integral</label><div class="moeda"><span>R$</span><input type="text" inputmode="decimal" id="e-integral" value="${v.preco_integral_centavos ? paraMoeda(v.preco_integral_centavos) : ''}" placeholder="690,00"></div><div class="msg"></div></div>
+            </div>
+            <div class="grid2">
+              <div class="campo" data-campo="total_vagas"><label for="e-vagas">Total de vagas</label><input type="number" id="e-vagas" min="${ocupacao || 1}" max="200" value="${v.total_vagas}">${ocupacao ? `<div class="ajuda">Mínimo ${ocupacao} (já ocupadas)</div>` : ''}<div class="msg"></div></div>
+              <div class="campo"><label>&nbsp;</label><label class="toggle"><input type="checkbox" id="e-ativa" ${v.ativa ? 'checked' : ''}> À venda no site</label></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="cartao bloco">
+            <h2>Roteiro dia a dia</h2>
+            <div id="dias"></div>
+            <button class="btn btn-borda btn-mini" type="button" id="add-dia">+ Adicionar dia</button>
+            <div class="campo" data-campo="programacao"><div class="msg"></div></div>
+          </div>
+          <div class="cartao bloco" style="margin-top:16px">
+            <h2>Fotos</h2>
+            <p class="sub" style="margin:-.6rem 0 1rem;font-size:.86rem">Arraste fotos do computador ou toque em <b>Escolher fotos</b>. Elas são reduzidas automaticamente e entram na página quando você <b>salvar</b>.</p>
+            <div id="fotos"></div>
+            <div class="campo" data-campo="fotos"><div class="msg"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="barra-salvar">
+        <button class="btn btn-borda" type="button" id="cancelar">Cancelar</button>
+        <button class="btn btn-sol" type="submit" id="salvar">${criando ? 'Criar viagem' : 'Salvar alterações'}</button>
+      </div>
+      </form>`;
+
+    // estado local do editor
+    const prog = JSON.parse(JSON.stringify(v.programacao || []));
+    const fotos = { veiculo: [...(v.fotos?.veiculo || [])], hospedagem: [...(v.fotos?.hospedagem || [])], destino: [...(v.fotos?.destino || [])] };
+
+    function renderDias() {
+      $('#dias').innerHTML = prog.map((d, i) => `
+        <div class="dia-ed">
+          <div class="topo"><b>Dia ${i + 1}</b><input type="text" data-dia="${i}" data-k="titulo" value="${esc(d.titulo)}" placeholder="Título do dia"><button class="x" type="button" data-rm-dia="${i}" aria-label="Remover dia">×</button></div>
+          ${(d.itens || []).map((it, j) => `<div class="item-ed">
+            <input type="text" data-dia="${i}" data-item="${j}" data-k="hora" value="${esc(it.hora)}" placeholder="08:00" maxlength="5">
+            <input type="text" data-dia="${i}" data-item="${j}" data-k="atividade" value="${esc(it.atividade)}" placeholder="Atividade">
+            <button class="x" type="button" data-rm-item="${i}:${j}" aria-label="Remover horário">×</button></div>`).join('')}
+          <button class="btn btn-borda btn-mini" type="button" data-add-item="${i}">+ Horário</button>
+        </div>`).join('') || '<p class="sub">Nenhum dia cadastrado.</p>';
+    }
+    const CATS = [['veiculo', 'Ônibus'], ['hospedagem', 'Hospedagem'], ['destino', 'Destino']];
+    let enviando = 0;
+    function atualizarSalvar() { const b = $('#salvar'); if (b) { b.disabled = enviando > 0; b.textContent = enviando > 0 ? `Enviando ${enviando} foto(s)…` : (criando ? 'Criar viagem' : 'Salvar alterações'); } }
+    function renderFotos() {
+      $('#fotos').innerHTML = CATS.map(([k, n]) => `
+        <div class="cat" data-zona="${k}"><h3>${n}${k === 'destino' ? ' <small style="text-transform:none;letter-spacing:0;font-weight:500">(a 1ª vira a capa da página)</small>' : ''}</h3>
+          ${fotos[k].length ? `<div class="grade-fotos">${fotos[k].map((f, i) => `
+            <div class="foto-card">
+              <div class="thumb">
+                <img src="${esc(f._previa || f.url)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+                ${k === 'destino' && i === 0 ? '<span class="selo-capa">Capa</span>' : ''}
+                ${f._enviando ? '<div class="estado">Enviando…</div>' : ''}
+                ${f._erro ? `<div class="estado erro">${esc(f._erro)}</div>` : ''}
+              </div>
+              <input type="text" data-cat="${k}" data-i="${i}" data-k="legenda" value="${esc(f.legenda)}" placeholder="Legenda (opcional)" maxlength="120" ${f._erro ? 'disabled' : ''}>
+              <div class="barra-acoes">
+                <button type="button" data-mover="${k}:${i}:-1" ${i === 0 || f._enviando ? 'disabled' : ''} aria-label="Mover para a esquerda" title="Mover para a esquerda">◀</button>
+                <button type="button" data-mover="${k}:${i}:1" ${i === fotos[k].length - 1 || f._enviando ? 'disabled' : ''} aria-label="Mover para a direita" title="Mover para a direita">▶</button>
+                <button type="button" data-rm-foto="${k}:${i}" ${f._enviando ? 'disabled' : ''} aria-label="Remover foto" title="Remover">✕</button>
+              </div>
+            </div>`).join('')}</div>` : ''}
+          ${pode('viagens.editar') ? `<div class="soltar" data-soltar="${k}">
+            Arraste as fotos aqui<br>
+            <label class="btn btn-noite btn-mini" style="cursor:pointer">Escolher fotos<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/*" multiple hidden data-arquivos="${k}"></label>
+            <button class="btn btn-borda btn-mini" type="button" data-link-foto="${k}">Usar link da internet</button>
+            <small>JPG, PNG ou WebP · várias de uma vez</small>
+          </div>` : ''}
+        </div>`).join('');
+      atualizarSalvar();
+    }
+
+    // Reduz a imagem no navegador: máx. 1920 px no lado maior, WebP (ou JPEG), até ~1,5 MB.
+    async function carregarImagem(arquivo) {
+      try { return await createImageBitmap(arquivo, { imageOrientation: 'from-image' }); } catch {}
+      return new Promise((ok, erro) => {
+        const img = new Image(), u = URL.createObjectURL(arquivo);
+        img.onload = () => { URL.revokeObjectURL(u); ok(img); };
+        img.onerror = () => { URL.revokeObjectURL(u); erro(new Error('formato')); };
+        img.src = u;
+      });
+    }
+    async function reduzir(arquivo) {
+      const img = await carregarImagem(arquivo);
+      const w = img.width, h = img.height, escala = Math.min(1, 1920 / Math.max(w, h));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(w * escala); canvas.height = Math.round(h * escala);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const gerar = (tipo, q) => new Promise((ok) => canvas.toBlob(ok, tipo, q));
+      let tipo = 'image/webp', q = 0.82, blob = await gerar(tipo, q);
+      if (!blob || blob.type !== 'image/webp') { tipo = 'image/jpeg'; blob = await gerar(tipo, 0.85); q = 0.85; }
+      while (blob && blob.size > 1_500_000 && q > 0.4) { q -= 0.1; blob = await gerar(tipo, q); }
+      if (!blob) throw new Error('falha');
+      return blob;
+    }
+    async function enviarArquivos(cat, lista) {
+      const arquivos = [...lista].filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+      if (!arquivos.length) return toast('Selecione arquivos de imagem.', true);
+      const itens = arquivos.map((a) => ({ url: '', legenda: '', _enviando: true, _previa: URL.createObjectURL(a), _arquivo: a }));
+      fotos[cat].push(...itens);
+      enviando += itens.length;
+      renderFotos();
+      for (const item of itens) {
+        try {
+          let blob;
+          try { blob = await reduzir(item._arquivo); }
+          catch { throw new Error(/\.(heic|heif)$/i.test(item._arquivo.name) ? 'HEIC não suportado neste navegador. Converta para JPG.' : 'Não foi possível ler esta imagem'); }
+          const res = await fetch('/api/admin/fotos', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${sess.get()}`, 'Content-Type': blob.type, 'X-Nome-Arquivo': encodeURIComponent(item._arquivo.name) },
+            body: blob,
+          });
+          if (res.status === 401) { sess.del(); mostrarLogin('Sessão expirada. Entre novamente.'); return; }
+          const json = await res.json().catch(() => ({}));
+          if (!json.ok) throw new Error(json.erro?.mensagem || 'Falha no envio');
+          item.url = json.data.url;
+        } catch (err) {
+          item._erro = err.message;
+        } finally {
+          item._enviando = false;
+          delete item._arquivo;
+          enviando--;
+          if ($('#fotos')) renderFotos();
+        }
+      }
+      const erros = itens.filter((i) => i._erro).length;
+      if (erros) toast(`${erros} foto(s) não foram enviadas. Remova-as e tente de novo.`, true);
+      else toast(`${itens.length} foto(s) enviada(s). Clique em salvar para publicar.`);
+    }
+
+    renderDias(); renderFotos();
+    if (!pode('viagens.editar')) {
+      $$('#form-viagem input, #form-viagem textarea, #form-viagem button').forEach((el) => {
+        if (!['e-sinal', 'e-integral', 'salvar', 'cancelar'].includes(el.id)) el.disabled = true;
+      });
+    }
+    if (!pode('precos.alterar')) { $('#e-sinal').disabled = true; $('#e-integral').disabled = true; }
+
+    const form = $('#form-viagem');
+    form.addEventListener('input', (e) => {
+      const t = e.target;
+      if (t.dataset.dia !== undefined) {
+        const d = prog[+t.dataset.dia];
+        if (t.dataset.item !== undefined) d.itens[+t.dataset.item][t.dataset.k] = t.value; else d[t.dataset.k] = t.value;
+      }
+      if (t.dataset.cat) { fotos[t.dataset.cat][+t.dataset.i][t.dataset.k] = t.value; }
+      if (t.id === 'e-titulo' && criando && !$('#e-id').dataset.mexido) { $('#e-id').value = slug(t.value); $('#e-id-prev').textContent = $('#e-id').value || '…'; }
+      if (t.id === 'e-id') { t.dataset.mexido = '1'; t.value = slug(t.value); $('#e-id-prev').textContent = t.value || '…'; }
+    });
+    form.addEventListener('change', (e) => {
+      const t = e.target;
+      if (t.dataset.arquivos && t.files?.length) { enviarArquivos(t.dataset.arquivos, t.files); t.value = ''; }
+    });
+    const zonaDe = (e) => e.target.closest?.('[data-soltar]');
+    form.addEventListener('dragover', (e) => { const z = zonaDe(e); if (z && pode('viagens.editar')) { e.preventDefault(); z.classList.add('ativo'); } });
+    form.addEventListener('dragleave', (e) => { const z = zonaDe(e); if (z) z.classList.remove('ativo'); });
+    form.addEventListener('drop', (e) => {
+      const z = zonaDe(e); if (!z) return;
+      e.preventDefault(); z.classList.remove('ativo');
+      if (pode('viagens.editar') && e.dataTransfer?.files?.length) enviarArquivos(z.dataset.soltar, e.dataTransfer.files);
+    });
+    form.addEventListener('click', (e) => {
+      const t = e.target.closest('button'); if (!t) return;
+      if (t.id === 'add-dia') { prog.push({ dia: prog.length + 1, titulo: '', itens: [{ hora: '', atividade: '' }] }); renderDias(); }
+      if (t.dataset.rmDia) { prog.splice(+t.dataset.rmDia, 1); renderDias(); }
+      if (t.dataset.addItem) { prog[+t.dataset.addItem].itens.push({ hora: '', atividade: '' }); renderDias(); }
+      if (t.dataset.rmItem) { const [i, j] = t.dataset.rmItem.split(':').map(Number); prog[i].itens.splice(j, 1); renderDias(); }
+      if (t.dataset.linkFoto) {
+        const url = (prompt('Cole o link da imagem (começando com https://):') || '').trim();
+        if (!url) return;
+        if (!/^https:\/\/\S+$/.test(url)) return toast('O link precisa começar com https://', true);
+        fotos[t.dataset.linkFoto].push({ url, legenda: '' }); renderFotos();
+      }
+      if (t.dataset.rmFoto) { const [k, i] = t.dataset.rmFoto.split(':'); const [f] = fotos[k].splice(+i, 1); if (f?._previa) URL.revokeObjectURL(f._previa); renderFotos(); }
+      if (t.dataset.mover) {
+        const [k, i, d] = t.dataset.mover.split(':'); const a = +i, b = a + +d;
+        if (b < 0 || b >= fotos[k].length) return;
+        [fotos[k][a], fotos[k][b]] = [fotos[k][b], fotos[k][a]]; renderFotos();
+      }
+    });
+    $('#voltar').addEventListener('click', () => navegar('viagens'));
+    $('#cancelar').addEventListener('click', () => navegar('viagens'));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (enviando > 0) return toast('Aguarde o envio das fotos terminar.', true);
+      const partida = $('#e-partida').value, retorno = $('#e-retorno').value;
+      const payload = {
+        id: criando ? $('#e-id').value : v.id,
+        titulo: $('#e-titulo').value,
+        destino: $('#e-destino').value,
+        descricao: $('#e-desc').value,
+        data_partida: partida ? new Date(partida).toISOString() : '',
+        data_retorno: retorno ? new Date(retorno).toISOString() : null,
+        local_embarque: $('#e-embarque').value,
+        total_vagas: Number($('#e-vagas').value),
+        preco_sinal_centavos: centavos($('#e-sinal').value),
+        preco_integral_centavos: centavos($('#e-integral').value),
+        ativa: $('#e-ativa').checked,
+        programacao: prog.map((d, i) => ({ dia: i + 1, titulo: d.titulo.trim(), itens: (d.itens || []).filter((it) => it.atividade.trim()).map((it) => ({ hora: it.hora.trim(), atividade: it.atividade.trim() })) })).filter((d) => d.titulo || d.itens.length),
+        fotos: Object.fromEntries(Object.entries(fotos).map(([k, l]) => [k, l.filter((f) => f.url && !f._erro).map((f) => ({ url: f.url.trim(), legenda: (f.legenda || '').trim() }))])),
+      };
+      // aviso de mudança de preço
+      if (!criando && (payload.preco_integral_centavos !== v.preco_integral_centavos || payload.preco_sinal_centavos !== v.preco_sinal_centavos)) {
+        if (!confirm(`Confirmar novos preços?\nSinal: ${reais(v.preco_sinal_centavos)} → ${reais(payload.preco_sinal_centavos)}\nIntegral: ${reais(v.preco_integral_centavos)} → ${reais(payload.preco_integral_centavos)}\n\nReservas já feitas mantêm o valor original.`)) return;
+      }
+      const btn = $('#salvar'); btn.disabled = true;
+      const r = await api(criando ? '/viagens' : `/viagens/${encodeURIComponent(v.id)}`, { method: criando ? 'POST' : 'PUT', body: JSON.stringify(payload) }).catch(() => null);
+      btn.disabled = false;
+      if (!r) return;
+      $$('[data-campo]', form).forEach((el) => el.removeAttribute('data-erro'));
+      if (!r.json.ok) {
+        const campos = r.json.erro?.campos || {};
+        Object.entries(campos).forEach(([k, msg]) => { const el = $(`[data-campo="${k}"]`, form); if (el) { el.setAttribute('data-erro', ''); $('.msg', el).textContent = msg; } });
+        return toast(r.json.erro?.mensagem || 'Erro ao salvar', true);
+      }
+      toast(criando ? 'Viagem criada!' : 'Alterações salvas.');
+      navegar('viagens');
+    });
+  }
+
+  // ---------- reservas ----------
+  async function telaReservas(id) {
+    const c = $('#conteudo');
+    c.innerHTML = '<p class="vazio">Carregando…</p>';
+    const v = estado.viagens.find((x) => x.id === id) || { titulo: id };
+    const r = await api(`/viagens/${encodeURIComponent(id)}/reservas`);
+    const lista = r.json.data || [];
+    const filtroAtual = estado.filtroReservas || 'ATIVAS';
+    const filtrar = (f) => lista.filter((x) => f === 'TODAS' ? true : f === 'ATIVAS' ? ['PENDENTE', 'CONFIRMADO'].includes(x.status) : x.status === f);
+    const render = (f) => {
+      const itens = filtrar(f);
+      $('#tab-res').innerHTML = itens.length ? `<table><thead><tr><th>Código</th><th>Passageiro</th><th>CPF</th><th>Telefone</th><th>Tipo</th><th>Valor</th><th>Reserva</th><th>Pagamento</th><th>Criada</th><th></th></tr></thead><tbody>
+        ${itens.map((x) => `<tr>
+          <td><code>${esc(x.codigo)}</code></td><td>${esc(x.nome_completo)}</td><td class="num">${esc(x.cpf)}</td>
+          <td class="num"><a href="https://wa.me/55${esc(x.telefone)}" target="_blank" rel="noopener">${esc(x.telefone.replace(/^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3'))}</a></td>
+          <td>${x.tipo_pagamento === 'SINAL' ? 'Sinal' : 'Integral'}</td><td class="num">${reais(x.valor_centavos)}</td>
+          <td><span class="pill p-${esc(x.status)}">${esc(x.status)}</span></td>
+          <td>${x.pagamento ? `<span class="pill p-${esc(x.pagamento)}">${esc(x.pagamento)}</span>` : '—'}</td>
+          <td class="num">${dataHora(x.criado_em)}</td>
+          <td>${pode('reservas.cancelar') && ['PENDENTE', 'CONFIRMADO'].includes(x.status) ? `<button class="btn btn-perigo btn-mini" data-cancelar="${esc(x.id)}" data-pago="${x.status === 'CONFIRMADO'}">Cancelar</button>` : ''}</td>
+        </tr>`).join('')}</tbody></table>` : '<p class="vazio">Nenhuma reserva neste filtro.</p>';
+      $$('[data-cancelar]').forEach((b) => b.addEventListener('click', async () => {
+        const pago = b.dataset.pago === 'true';
+        if (!confirm(pago ? 'Cancelar esta reserva PAGA? A vaga será liberada e o pagamento irá para Pendências para você fazer o estorno.' : 'Cancelar esta reserva pendente e liberar a vaga?')) return;
+        const res = await api(`/reservas/${b.dataset.cancelar}/cancelar`, { method: 'POST' });
+        if (!res.json.ok) return toast(res.json.erro?.mensagem || 'Erro', true);
+        toast(res.json.data?.estornar ? 'Cancelada. Faça o estorno do Pix (veja Pendências).' : 'Reserva cancelada.');
+        telaReservas(id);
+      }));
+    };
+    const cont = (f) => filtrar(f).length;
+    c.innerHTML = `
+      <button class="voltar" type="button" id="voltar">← Viagens</button>
+      <div class="cabeca"><div><h1>Reservas</h1><p class="sub">${esc(v.titulo)}</p></div>
+        ${pode('manifesto.exportar') ? '<button class="btn btn-noite" type="button" id="ir-manifesto">Gerar lista ANTT/DER</button>' : ''}</div>
+      <div class="filtros">
+        <select id="filtro">${[['ATIVAS', 'Ativas'], ['CONFIRMADO', 'Confirmadas'], ['PENDENTE', 'Aguardando Pix'], ['EXPIRADO', 'Expiradas'], ['CANCELADO', 'Canceladas'], ['TODAS', 'Todas']]
+          .map(([k, n]) => `<option value="${k}" ${k === filtroAtual ? 'selected' : ''}>${n} (${cont(k)})</option>`).join('')}</select>
+      </div>
+      <div class="cartao tabela-wrap" id="tab-res"></div>`;
+    $('#voltar').addEventListener('click', () => navegar('viagens'));
+    $('#ir-manifesto')?.addEventListener('click', () => navegar('manifesto', id));
+    $('#filtro').addEventListener('change', (e) => { estado.filtroReservas = e.target.value; render(e.target.value); });
+    render(filtroAtual);
+  }
+
+  // ---------- manifesto ANTT / DER ----------
+  const COLUNAS = {
+    ordem: 'Nº', nome: 'Nome completo', rg: 'RG', orgao_emissor: 'Órgão emissor', cpf: 'CPF', telefone: 'Telefone', status: 'Situação', codigo: 'Código',
+  };
+  const MODELOS = {
+    antt: { nome: 'ANTT (interestadual)', colunas: ['ordem', 'nome', 'rg', 'orgao_emissor', 'cpf'] },
+    der: { nome: 'DER (intermunicipal)', colunas: ['ordem', 'nome', 'rg', 'orgao_emissor', 'cpf', 'telefone'] },
+    interno: { nome: 'Conferência interna', colunas: ['ordem', 'nome', 'cpf', 'telefone', 'status', 'codigo'] },
+  };
+
+  async function telaManifesto(id) {
+    const c = $('#conteudo');
+    c.innerHTML = `
+      <button class="voltar" type="button" id="voltar">← Viagens</button>
+      <div class="cabeca"><div><h1>Lista de passageiros</h1><p class="sub" id="m-viagem">Carregando…</p></div></div>
+      <div class="aviso-box">Contém CPF e RG completos. O acesso fica registrado. Confira o leiaute exigido pelo órgão (ANTT ou DER do seu estado) antes de enviar — as colunas abaixo podem ser ajustadas.</div>
+      <div class="cartao bloco" style="margin-bottom:16px">
+        <div class="filtros">
+          <label>Modelo <select id="m-modelo">${Object.entries(MODELOS).map(([k, m]) => `<option value="${k}">${m.nome}</option>`).join('')}</select></label>
+          <label>Passageiros <select id="m-status"><option value="CONFIRMADO">Somente confirmados</option><option value="TODOS">Todos (inclui pendentes/cancelados)</option></select></label>
+        </div>
+        <div class="colunas" id="m-colunas">${Object.entries(COLUNAS).map(([k, n]) => `<label><input type="checkbox" value="${k}"> ${n}</label>`).join('')}</div>
+        <div class="acoes">
+          <button class="btn btn-sol" type="button" id="m-csv">Baixar planilha (CSV)</button>
+          <button class="btn btn-noite" type="button" id="m-imprimir">Imprimir / salvar PDF</button>
+        </div>
+      </div>
+      <div class="cartao tabela-wrap" id="m-previa"></div>`;
+    $('#voltar').addEventListener('click', () => navegar('viagens'));
+
+    let dados = null;
+    const colunasSel = () => $$('#m-colunas input:checked').map((i) => i.value);
+    const aplicarModelo = () => { const cols = MODELOS[$('#m-modelo').value].colunas; $$('#m-colunas input').forEach((i) => (i.checked = cols.includes(i.value))); previa(); };
+    const valor = (p, k) => k === 'status' ? ({ CONFIRMADO: 'Confirmado', PENDENTE: 'Pendente', EXPIRADO: 'Expirado', CANCELADO: 'Cancelado' }[p.status] || p.status) : p[k];
+
+    async function carregar() {
+      $('#m-previa').innerHTML = '<p class="vazio">Carregando…</p>';
+      const r = await api(`/passageiros/${encodeURIComponent(id)}?status=${$('#m-status').value}`);
+      if (!r.json.ok) return toast(r.json.erro?.mensagem || 'Erro', true);
+      dados = r.json.data;
+      // renumera após o filtro
+      dados.passageiros.forEach((p, i) => (p.ordem = i + 1));
+      $('#m-viagem').textContent = `${dados.viagem.titulo} · partida ${dataHora(dados.viagem.data_partida)} · ${dados.passageiros.length} passageiro(s)`;
+      previa();
+    }
+    function previa() {
+      if (!dados) return;
+      const cols = colunasSel();
+      $('#m-previa').innerHTML = dados.passageiros.length
+        ? `<table><thead><tr>${cols.map((k) => `<th>${COLUNAS[k]}</th>`).join('')}</tr></thead><tbody>${dados.passageiros.map((p) => `<tr>${cols.map((k) => `<td>${esc(valor(p, k))}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+        : '<p class="vazio">Nenhum passageiro neste filtro.</p>';
+    }
+    $('#m-modelo').addEventListener('change', aplicarModelo);
+    $('#m-status').addEventListener('change', carregar);
+    $('#m-colunas').addEventListener('change', previa);
+
+    $('#m-csv').addEventListener('click', () => {
+      if (!dados) return;
+      const cols = colunasSel();
+      const q = (s) => `"${String(s ?? '').replace(/"/g, '""')}"`;
+      const linhas = [cols.map((k) => q(COLUNAS[k])).join(';'), ...dados.passageiros.map((p) => cols.map((k) => q(valor(p, k))).join(';'))];
+      const blob = new Blob(['﻿' + linhas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `lista-${$('#m-modelo').value}-${id}.csv`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+
+    $('#m-imprimir').addEventListener('click', () => {
+      if (!dados) return;
+      const cols = colunasSel();
+      const modelo = MODELOS[$('#m-modelo').value].nome;
+      const v = dados.viagem;
+      const w = window.open('', '_blank');
+      if (!w) return toast('Permita pop-ups para imprimir.', true);
+      w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Lista de passageiros — ${esc(v.titulo)}</title>
+        <style>body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#000;margin:18mm}h1{font-size:14pt;margin:0 0 4mm}
+        .cab{display:grid;grid-template-columns:1fr 1fr;gap:2mm 8mm;margin-bottom:6mm;font-size:10pt}.cab b{display:inline-block;min-width:32mm}
+        table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:2mm 2.5mm;text-align:left}th{background:#eee;font-size:9.5pt}
+        .ass{margin-top:18mm;display:grid;grid-template-columns:1fr 1fr;gap:16mm}.ass div{border-top:1px solid #000;padding-top:2mm;text-align:center;font-size:9.5pt}
+        @page{size:A4;margin:12mm}@media print{body{margin:0}}</style></head><body>
+        <h1>RELAÇÃO DE PASSAGEIROS — ${esc(modelo.toUpperCase())}</h1>
+        <div class="cab">
+          <div><b>Empresa:</b> Apollo Turismo</div><div><b>Emitida em:</b> ${esc(dataHora(new Date().toISOString()))}</div>
+          <div><b>Viagem:</b> ${esc(v.titulo)}</div><div><b>Destino:</b> ${esc(v.destino)}</div>
+          <div><b>Partida:</b> ${esc(dataHora(v.data_partida))}</div><div><b>Retorno:</b> ${esc(dataHora(v.data_retorno))}</div>
+          <div><b>Embarque:</b> ${esc(v.local_embarque || '—')}</div><div><b>Passageiros:</b> ${dados.passageiros.length} de ${v.total_vagas} lugares</div>
+          <div><b>Veículo/placa:</b> ______________________</div><div><b>Motorista(s):</b> ______________________</div>
+        </div>
+        <table><thead><tr>${cols.map((k) => `<th>${COLUNAS[k]}</th>`).join('')}</tr></thead>
+        <tbody>${dados.passageiros.map((p) => `<tr>${cols.map((k) => `<td>${esc(valor(p, k))}</td>`).join('')}</tr>`).join('')}</tbody></table>
+        <div class="ass"><div>Responsável pela empresa</div><div>Motorista</div></div>
+        <script>window.onload=()=>window.print()<\/script></body></html>`);
+      w.document.close();
+    });
+
+    aplicarModelo();
+    carregar();
+  }
+
+  // ---------- pendências ----------
+  async function telaPendencias() {
+    const c = $('#conteudo');
+    c.innerHTML = '<p class="vazio">Carregando…</p>';
+    const r = await api('/pendencias');
+    const lista = r.json.data || [];
+    atualizarBadge();
+    c.innerHTML = `
+      <div class="cabeca"><div><h1>Pendências financeiras</h1><p class="sub">Pix pagos sem vaga (pagamento após o prazo), valores divergentes e reservas pagas canceladas. Faça o estorno no app do gateway e marque aqui.</p></div></div>
+      <div class="cartao tabela-wrap">${lista.length ? `<table><thead><tr><th>Situação</th><th>Viagem</th><th>Passageiro</th><th>Valor</th><th>Pix (gateway)</th><th>Motivo</th><th>Atualizado</th><th></th></tr></thead><tbody>
+        ${lista.map((x) => `<tr>
+          <td><span class="pill p-${esc(x.status_interno)}">${x.status_interno === 'ESTORNAR' ? 'Estornar' : 'Divergente'}</span></td>
+          <td>${esc(x.titulo)}<br><small><code>${esc(x.codigo)}</code></small></td>
+          <td>${esc(x.nome_completo)}<br><small><a href="https://wa.me/55${esc(x.telefone)}" target="_blank" rel="noopener">WhatsApp</a></small></td>
+          <td class="num">${reais(x.valor_centavos)}</td>
+          <td><small>${esc(x.gateway)}<br><code>${esc(x.gateway_payment_id)}</code></small></td>
+          <td><small>${esc(x.observacao || '')}</small></td>
+          <td class="num">${dataHora(x.atualizado_em)}</td>
+          <td>${pode('financeiro.estornar') ? `<button class="btn btn-borda btn-mini" data-estornado="${esc(x.id)}">Marcar estornado</button>` : ''}</td>
+        </tr>`).join('')}</tbody></table>` : '<p class="vazio">Nenhuma pendência. 🎉</p>'}</div>`;
+    $$('[data-estornado]').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('Confirma que o valor já foi devolvido ao cliente?')) return;
+      const res = await api(`/pagamentos/${b.dataset.estornado}/estornado`, { method: 'POST' });
+      if (!res.json.ok) return toast('Erro ao registrar', true);
+      toast('Estorno registrado.');
+      telaPendencias();
+    }));
+  }
+
+  // ---------- usuários (master) ----------
+  async function telaUsuarios() {
+    const c = $('#conteudo');
+    c.innerHTML = '<p class="vazio">Carregando…</p>';
+    const r = await api('/usuarios');
+    if (!r.json.ok) { c.innerHTML = `<p class="vazio">${esc(r.json.erro?.mensagem || 'Sem acesso')}</p>`; return; }
+    const lista = r.json.data, cat = r.json.catalogo;
+    c.innerHTML = `
+      <div class="cabeca"><div><h1>Usuários e permissões</h1><p class="sub">Só o master cria usuários e define o que cada um pode fazer. Usuários novos trocam a senha no primeiro acesso.</p></div>
+        <button class="btn btn-sol" type="button" id="novo-usuario">+ Novo usuário</button></div>
+      <div class="cartao tabela-wrap"><table><thead><tr><th>Nome</th><th>Usuário</th><th>Papel</th><th>Permissões</th><th>Último acesso</th><th>Situação</th><th></th></tr></thead><tbody>
+      ${lista.map((u) => `<tr>
+        <td class="titulo-viagem">${esc(u.nome)}</td><td><code>${esc(u.usuario)}</code></td>
+        <td><span class="pill p-${u.papel}">${u.papel === 'MASTER' ? 'Master' : 'Operador'}</span></td>
+        <td><div class="chips-perm">${u.papel === 'MASTER' ? '<span>Todas</span>' : u.permissoes.length ? u.permissoes.map((p) => `<span title="${esc(cat[p] || '')}">${esc(p)}</span>`).join('') : '<span>Nenhuma</span>'}</div></td>
+        <td class="num">${u.ultimo_login_em ? dataHora(u.ultimo_login_em) : 'Nunca'}</td>
+        <td>${u.bloqueado_ate && u.bloqueado_ate > new Date().toISOString() ? '<span class="pill p-ESTORNAR">Bloqueado</span>' : `<span class="pill ${u.ativo ? 'p-ativa' : 'p-inativa'}">${u.ativo ? 'Ativo' : 'Desativado'}</span>`}${u.trocar_senha ? ' <span class="pill p-PENDENTE">Trocar senha</span>' : ''}</td>
+        <td>${u.papel === 'MASTER' ? '' : `<div class="acoes"><button class="btn btn-borda btn-mini" data-editar-u="${esc(u.id)}">Editar</button><button class="btn btn-borda btn-mini" data-senha-u="${esc(u.id)}">Redefinir senha</button></div>`}</td>
+      </tr>`).join('')}</tbody></table></div>`;
+    $('#novo-usuario').addEventListener('click', () => formUsuario(null, cat));
+    $$('[data-editar-u]').forEach((b) => b.addEventListener('click', () => formUsuario(lista.find((u) => u.id === b.dataset.editarU), cat)));
+    $$('[data-senha-u]').forEach((b) => b.addEventListener('click', () => formRedefinir(lista.find((u) => u.id === b.dataset.senhaU))));
+  }
+
+  function modal(html) {
+    const fundo = document.createElement('div');
+    fundo.className = 'modal-fundo';
+    fundo.innerHTML = `<div class="cartao" role="dialog" aria-modal="true">${html}</div>`;
+    document.body.appendChild(fundo);
+    fundo.addEventListener('click', (e) => { if (e.target === fundo || e.target.closest('[data-fechar-modal]')) fundo.remove(); });
+    const primeiro = fundo.querySelector('input:not([disabled])'); if (primeiro) primeiro.focus();
+    return fundo;
+  }
+  function errosCampos(raiz, campos = {}) {
+    $$('[data-campo]', raiz).forEach((el) => { const m = campos[el.dataset.campo]; if (m) { el.setAttribute('data-erro', ''); $('.msg', el).textContent = m; } else el.removeAttribute('data-erro'); });
+  }
+
+  function formUsuario(u, cat) {
+    const novo = !u;
+    const m = modal(`
+      <h2>${novo ? 'Novo usuário' : 'Editar ' + esc(u.nome)}</h2>
+      <form id="f-usuario" novalidate style="margin-top:1rem">
+        <div class="campo" data-campo="nome"><label>Nome</label><input type="text" name="nome" value="${esc(u?.nome || '')}" maxlength="80"><div class="msg"></div></div>
+        <div class="campo" data-campo="usuario"><label>Usuário (login)</label><input type="text" name="usuario" value="${esc(u?.usuario || '')}" ${novo ? '' : 'disabled'} autocapitalize="none" spellcheck="false" placeholder="ex.: maria.vendas"><div class="msg"></div></div>
+        ${novo ? `<div class="campo" data-campo="senha"><label>Senha provisória</label><input type="text" name="senha" autocomplete="new-password" placeholder="mín. 10 caracteres, letras e números"><div class="ajuda">O usuário será obrigado a trocar no primeiro acesso.</div><div class="msg"></div></div>` : ''}
+        <label style="font-weight:600;font-size:.88rem">Permissões</label>
+        <div class="perms">${Object.entries(cat).map(([k, d]) => `<label><input type="checkbox" name="perm" value="${k}" ${u?.permissoes?.includes(k) ? 'checked' : ''}><span>${esc(d)}<code>${k}</code></span></label>`).join('')}</div>
+        <div class="campo" data-campo="permissoes"><div class="msg"></div></div>
+        ${novo ? '' : `<label class="toggle" style="margin-bottom:1rem"><input type="checkbox" name="ativo" ${u.ativo ? 'checked' : ''}> Usuário ativo (desmarcar encerra as sessões dele)</label>`}
+        <div class="acoes" style="justify-content:flex-end"><button class="btn btn-borda" type="button" data-fechar-modal>Cancelar</button><button class="btn btn-sol" type="submit">${novo ? 'Criar usuário' : 'Salvar'}</button></div>
+      </form>`);
+    $('#f-usuario', m).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const corpo = { nome: f.nome.value, permissoes: $$('input[name="perm"]:checked', f).map((i) => i.value) };
+      if (novo) Object.assign(corpo, { usuario: f.usuario.value, senha: f.senha.value }); else corpo.ativo = f.ativo.checked;
+      const r = await api(novo ? '/usuarios' : `/usuarios/${u.id}`, { method: novo ? 'POST' : 'PUT', body: JSON.stringify(corpo) });
+      if (!r.json.ok) { errosCampos(f, r.json.erro?.campos); return toast(r.json.erro?.mensagem || 'Erro', true); }
+      m.remove(); toast(novo ? 'Usuário criado. Passe o login e a senha provisória para ele.' : 'Usuário atualizado.'); telaUsuarios();
+    });
+  }
+
+  function formRedefinir(u) {
+    const m = modal(`
+      <h2>Redefinir senha de ${esc(u.nome)}</h2>
+      <p class="sub">As sessões abertas dele serão encerradas e ele terá de trocar a senha ao entrar.</p>
+      <form id="f-redef" novalidate style="margin-top:1rem">
+        <div class="campo" data-campo="senha"><label>Nova senha provisória</label><input type="text" name="senha" autocomplete="new-password"><div class="msg"></div></div>
+        <div class="acoes" style="justify-content:flex-end"><button class="btn btn-borda" type="button" data-fechar-modal>Cancelar</button><button class="btn btn-sol" type="submit">Redefinir</button></div>
+      </form>`);
+    $('#f-redef', m).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const r = await api(`/usuarios/${u.id}/senha`, { method: 'POST', body: JSON.stringify({ senha: e.target.senha.value }) });
+      if (!r.json.ok) { errosCampos(e.target, r.json.erro?.campos); return toast(r.json.erro?.mensagem || 'Erro', true); }
+      m.remove(); toast('Senha redefinida.'); telaUsuarios();
+    });
+  }
+
+  // ---------- minha senha ----------
+  function telaMinhaSenha(obrigatoria) {
+    $('#tela-login').hidden = true; $('#tela-app').hidden = false;
+    $$('[data-nav]').forEach((b) => b.removeAttribute('aria-current'));
+    const c = $('#conteudo');
+    c.innerHTML = `
+      <div class="estreito">
+        ${obrigatoria ? '' : '<button class="voltar" type="button" id="voltar">← Viagens</button>'}
+        <h1>${obrigatoria ? 'Crie sua senha' : 'Minha senha'}</h1>
+        <p class="sub">${obrigatoria ? 'Por segurança, defina uma senha pessoal antes de continuar.' : `Conectado como <b>${esc(estado.me?.usuario || '')}</b>. Trocar a senha encerra suas sessões em outros aparelhos.`}</p>
+        <form class="cartao bloco" id="f-senha" novalidate style="margin-top:1rem">
+          <div class="campo" data-campo="senha_atual"><label>Senha atual${obrigatoria ? ' (provisória)' : ''}</label><input type="password" name="senha_atual" autocomplete="current-password"><div class="msg"></div></div>
+          <div class="campo" data-campo="nova_senha"><label>Nova senha</label><input type="password" name="nova_senha" autocomplete="new-password"><div class="ajuda">Mínimo 10 caracteres, com letras e números.</div><div class="msg"></div></div>
+          <div class="campo" data-campo="confirma"><label>Repita a nova senha</label><input type="password" name="confirma" autocomplete="new-password"><div class="msg"></div></div>
+          <button class="btn btn-sol" type="submit">Salvar nova senha</button>
+        </form>
+      </div>`;
+    $('#voltar')?.addEventListener('click', () => navegar('viagens'));
+    $('#f-senha').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      if (f.nova_senha.value !== f.confirma.value) return errosCampos(f, { confirma: 'As senhas não conferem' });
+      const r = await api('/me/senha', { method: 'POST', body: JSON.stringify({ senha_atual: f.senha_atual.value, nova_senha: f.nova_senha.value }) });
+      if (!r.json.ok) { errosCampos(f, r.json.erro?.campos); return toast(r.json.erro?.mensagem || 'Erro', true); }
+      toast('Senha alterada.');
+      if (estado.me) estado.me.trocar_senha = false;
+      entrarNoApp();
+    });
+  }
+
+  // ---------- auditoria ----------
+  const ACOES = {
+    login: 'Entrou no painel', logout: 'Saiu', login_falhou: 'Tentativa de login falhou', login_usuario_inativo: 'Login de usuário desativado',
+    master_criado: 'Master criado', senha_alterada: 'Trocou a própria senha', senha_redefinida: 'Redefiniu senha de usuário',
+    usuario_criado: 'Criou usuário', usuario_alterado: 'Alterou usuário/permissões', viagem_criada: 'Criou viagem',
+    viagem_alterada: 'Alterou viagem', preco_alterado: 'Alterou preço', reserva_cancelada: 'Cancelou reserva',
+    manifesto_exportado: 'Gerou lista de passageiros', estorno_registrado: 'Registrou estorno',
+  };
+  function descreverDetalhe(a) {
+    const d = a.detalhe; if (!d) return '';
+    const partes = [];
+    if (d.sinal) partes.push(`sinal ${reais(d.sinal[0])} → ${reais(d.sinal[1])}`);
+    if (d.integral) partes.push(`integral ${reais(d.integral[0])} → ${reais(d.integral[1])}`);
+    if (d.vagas) partes.push(Array.isArray(d.vagas) ? `vagas ${d.vagas[0]} → ${d.vagas[1]}` : `${d.vagas} vagas`);
+    if (d.a_venda !== undefined) partes.push(d.a_venda ? 'colocada à venda' : 'venda pausada');
+    if (d.usuario && a.acao !== 'login_falhou') partes.push(`usuário ${d.usuario}`);
+    if (d.usuario && a.acao === 'login_falhou') partes.push(`tentou "${d.usuario}"`);
+    if (d.permissoes_depois) partes.push(`permissões: ${d.permissoes_depois.join(', ') || 'nenhuma'}`);
+    if (d.permissoes && !d.permissoes_depois) partes.push(`permissões: ${d.permissoes.join(', ') || 'nenhuma'}`);
+    if (d.ativo !== undefined) partes.push(d.ativo ? 'reativado' : 'desativado');
+    if (d.quantidade !== undefined) partes.push(`${d.quantidade} passageiro(s), ${d.formato}`);
+    if (d.codigo) partes.push(`reserva ${d.codigo}${d.estornar ? ' (estornar)' : ''}`);
+    if (d.bloqueado) partes.push('usuário bloqueado por 15 min');
+    return partes.join(' · ');
+  }
+  async function telaAuditoria() {
+    const c = $('#conteudo');
+    c.innerHTML = '<p class="vazio">Carregando…</p>';
+    const r = await api('/auditoria?limite=300');
+    const lista = r.json.data || [];
+    c.innerHTML = `
+      <div class="cabeca"><div><h1>Registro de atividades</h1><p class="sub">Últimas 300 ações no painel: acessos, mudanças de preço, cancelamentos, listas geradas e permissões.</p></div></div>
+      <div class="cartao tabela-wrap">${lista.length ? `<table><thead><tr><th>Quando</th><th>Usuário</th><th>Ação</th><th>Detalhes</th><th>IP</th></tr></thead><tbody>
+      ${lista.map((a) => `<tr><td class="num">${dataHora(a.criado_em)}</td><td>${esc(a.usuario || '—')}</td><td>${esc(ACOES[a.acao] || a.acao)}</td>
+        <td><small>${esc(descreverDetalhe(a))}${a.alvo && !a.detalhe && !/^[0-9a-f-]{36}$/.test(a.alvo) ? `<code>${esc(a.alvo)}</code>` : ''}</small></td><td><small>${esc(a.ip || '')}</small></td></tr>`).join('')}
+      </tbody></table>` : '<p class="vazio">Nenhuma atividade registrada.</p>'}</div>`;
+  }
+
+  // ---------- início ----------
+  if (sess.get()) entrarNoApp().catch(() => {});
+  else mostrarLogin();
+})();
+</script>
+</body>
+</html>

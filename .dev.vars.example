@@ -1,0 +1,9 @@
+# Copie para .dev.vars (não versionar). Gere chaves com: openssl rand -base64 32
+DATA_ENC_KEY=
+DATA_HMAC_KEY=
+MASTER_USUARIO=master
+MASTER_SENHA=troque-esta-senha-123
+PIX_WEBHOOK_SECRET=dev-secret
+# PIX_ACCESS_TOKEN=
+# TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+# WHATSAPP_TOKEN=

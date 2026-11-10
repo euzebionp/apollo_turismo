@@ -1,0 +1,161 @@
+name = "apollo-reservas"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Front-end (public/index.html) servido pelo próprio Worker: mesmo domínio, sem CORS.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"   # /viagem/<id> também abre o index.html
+run_worker_first = ["/api/*", "/fotos/*"]
+
+# Fotos: ficam no D1 por padrão. Para usar o R2 (recomendado com muitas fotos), ative o R2 no painel,
+# crie o bucket "apollo-fotos" e descomente os blocos [[r2_buckets]] / [[env.*.r2_buckets]].
+# [[r2_buckets]]
+# binding = "FOTOS"
+# bucket_name = "apollo-fotos"
+
+[observability]
+enabled = true
+
+# Expira reservas PENDENTE vencidas e cancela a cobrança no gateway.
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "apollo-reservas-db"
+database_id = "31417474-66aa-401e-8134-c6e861909383"
+migrations_dir = "migrations"
+
+# Fila do WhatsApp (envio com reenvio automático). Se preferir não usar Queues,
+# remova os dois blocos abaixo: o Worker envia direto, em segundo plano.
+[[queues.producers]]
+binding = "WHATSAPP_QUEUE"
+queue = "apollo-whatsapp"
+
+[[queues.consumers]]
+queue = "apollo-whatsapp"
+max_batch_size = 10
+max_retries = 5
+
+# Limite de tentativas de reserva por IP (proteção contra bloqueio de vagas por robô).
+[[ratelimits]]
+name = "RESERVA_LIMITER"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }
+
+# Limite de tentativas de login no painel por IP.
+[[ratelimits]]
+name = "LOGIN_LIMITER"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }
+
+[vars]
+AMBIENTE = "development"              # development | production
+PIX_PROVIDER = "simulado"             # simulado | mercadopago | asaas
+RESERVA_MINUTOS = "15"
+ASAAS_BASE_URL = "https://api-sandbox.asaas.com/v3"
+AGENCIA_NOME = "Apollo Turismo"
+AGENCIA_WHATSAPP = "5534999999999"    # DDI+DDD+número, só dígitos
+TURNSTILE_SITE_KEY = "1x00000000000000000000AA"   # chave de teste da Cloudflare
+WHATSAPP_PHONE_NUMBER_ID = ""         # WhatsApp Cloud API (Meta)
+WHATSAPP_TEMPLATE = "confirmacao_reserva"
+WHATSAPP_TEMPLATE_LANG = "pt_BR"
+WHATSAPP_API_VERSION = "v21.0"
+
+# Segredos (NUNCA aqui) — configure com `npx wrangler secret put <NOME>`:
+#   PIX_ACCESS_TOKEN     token do Mercado Pago ou chave de API do Asaas
+#   PIX_WEBHOOK_SECRET   assinatura secreta do webhook (MP) ou token do webhook (Asaas)
+#   MASTER_USUARIO       login do usuário master (usado só no 1º login, para criá-lo)
+#   MASTER_SENHA         senha inicial do master (pode ser apagada depois do 1º login)
+#   DATA_ENC_KEY         32 bytes em base64 (cifra CPF/RG)
+#   DATA_HMAC_KEY        32 bytes em base64 (hash do CPF)
+#   TURNSTILE_SECRET     chave secreta do Turnstile
+#   WHATSAPP_TOKEN       token permanente da WhatsApp Cloud API
+
+# ---------------------------------------------------------------------------
+# HOMOLOGAÇÃO — site no ar com Pix SIMULADO (nenhum dinheiro real circula).
+# Publicar: npx wrangler deploy --env homologacao
+# Atenção: o botão "Simular pagamento" fica visível; não divulgue este endereço a clientes.
+# ---------------------------------------------------------------------------
+[env.homologacao]
+name = "apollo-reservas-homologacao"
+
+[env.homologacao.vars]
+AMBIENTE = "homologacao"
+PIX_PROVIDER = "simulado"
+RESERVA_MINUTOS = "15"
+ASAAS_BASE_URL = "https://api-sandbox.asaas.com/v3"
+AGENCIA_NOME = "Apollo Turismo"
+AGENCIA_WHATSAPP = "5534999999999"
+TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
+WHATSAPP_PHONE_NUMBER_ID = ""
+WHATSAPP_TEMPLATE = "confirmacao_reserva"
+WHATSAPP_TEMPLATE_LANG = "pt_BR"
+WHATSAPP_API_VERSION = "v21.0"
+
+[[env.homologacao.d1_databases]]
+binding = "DB"
+database_name = "apollo-reservas-db"
+database_id = "31417474-66aa-401e-8134-c6e861909383"
+migrations_dir = "migrations"
+
+[[env.homologacao.ratelimits]]
+name = "RESERVA_LIMITER"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }
+
+[[env.homologacao.ratelimits]]
+name = "LOGIN_LIMITER"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }
+
+[env.homologacao.triggers]
+crons = ["* * * * *"]
+
+[env.production]
+name = "apollo-reservas"
+# routes = [{ pattern = "reservas.apolloturismo.com.br", custom_domain = true }]
+
+[env.production.vars]
+AMBIENTE = "production"
+PIX_PROVIDER = "mercadopago"
+RESERVA_MINUTOS = "15"
+ASAAS_BASE_URL = "https://api.asaas.com/v3"
+AGENCIA_NOME = "Apollo Turismo"
+AGENCIA_WHATSAPP = "5534999999999"
+TURNSTILE_SITE_KEY = "COLE_AQUI_A_SITE_KEY_DO_TURNSTILE"
+WHATSAPP_PHONE_NUMBER_ID = "COLE_AQUI"
+WHATSAPP_TEMPLATE = "confirmacao_reserva"
+WHATSAPP_TEMPLATE_LANG = "pt_BR"
+WHATSAPP_API_VERSION = "v21.0"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "apollo-reservas-db"
+database_id = "31417474-66aa-401e-8134-c6e861909383"
+migrations_dir = "migrations"
+
+[[env.production.queues.producers]]
+binding = "WHATSAPP_QUEUE"
+queue = "apollo-whatsapp"
+
+[[env.production.queues.consumers]]
+queue = "apollo-whatsapp"
+max_batch_size = 10
+max_retries = 5
+
+[[env.production.ratelimits]]
+name = "RESERVA_LIMITER"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }
+
+[[env.production.ratelimits]]
+name = "LOGIN_LIMITER"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }
+
+[env.production.triggers]
+crons = ["* * * * *"]
