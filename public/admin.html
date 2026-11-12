@@ -393,7 +393,7 @@ header nav{overflow-x:auto}
           </div>
           <div class="cartao bloco" style="margin-top:16px">
             <h2>Fotos</h2>
-            <p class="sub" style="margin:-.6rem 0 1rem;font-size:.86rem">Arraste fotos do computador ou toque em <b>Escolher fotos</b>. Elas são reduzidas automaticamente e entram na página quando você <b>salvar</b>.</p>
+            <p class="sub" style="margin:-.6rem 0 1rem;font-size:.86rem">Escolha os arquivos no seu computador/celular ou arraste-os para a área abaixo. O navegador converte a imagem para um formato compatível (WebP/JPEG), reduz para até 1920 px e ela entra na página quando você <b>salvar</b>.</p>
             <div id="fotos"></div>
             <div class="campo" data-campo="fotos"><div class="msg"></div></div>
           </div>
@@ -443,12 +443,28 @@ header nav{overflow-x:auto}
             </div>`).join('')}</div>` : ''}
           ${pode('viagens.editar') ? `<div class="soltar" data-soltar="${k}">
             Arraste as fotos aqui<br>
-            <label class="btn btn-noite btn-mini" style="cursor:pointer">Escolher fotos<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/*" multiple hidden data-arquivos="${k}"></label>
+            <label class="btn btn-noite btn-mini" style="cursor:pointer">Escolher fotos do computador<input type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.avif,.bmp,.heic,.heif,image/jpeg,image/png,image/webp,image/gif,image/avif,image/bmp,image/heic,image/heif" multiple hidden data-arquivos="${k}"></label>
             <button class="btn btn-borda btn-mini" type="button" data-link-foto="${k}">Usar link da internet</button>
-            <small>JPG, PNG ou WebP · várias de uma vez</small>
+            <small>JPG, PNG, WebP, GIF, AVIF ou BMP · várias de uma vez · HEIC: use o Safari ou converta para JPG</small>
           </div>` : ''}
         </div>`).join('');
       atualizarSalvar();
+    }
+
+    // Formatos que os navegadores modernos conseguem abrir. Tudo é convertido
+    // para WebP (ou JPEG) antes do envio, para o site exibir em qualquer navegador.
+    const TIPO_ACEITO = /^image\/(jpeg|png|webp|gif|avif|bmp)$/i;
+    const EXT_ACEITA = /\.(jpe?g|png|webp|gif|avif|bmp)$/i;
+    const TIPO_HEIC = /^image\/hei[cf]$/i;
+    const EXT_HEIC = /\.(heic|heif)$/i;
+    const temExt = (f, re) => re.test(f.name || '');
+    const ehHeic = (f) => TIPO_HEIC.test(f.type || '') || temExt(f, EXT_HEIC);
+    const ehImagemAceita = (f) => TIPO_ACEITO.test(f.type || '') || temExt(f, EXT_ACEITA);
+
+    function erroDeFormato(arquivo) {
+      if (ehHeic(arquivo)) return 'HEIC não é compatível com este navegador. Converta para JPG/PNG (ou envie pelo Safari).';
+      if (/^image\//i.test(arquivo.type || '')) return 'Formato de imagem não compatível. Use JPG, PNG, WebP, GIF ou AVIF.';
+      return 'O arquivo selecionado não é uma imagem compatível. Use JPG, PNG, WebP, GIF ou AVIF.';
     }
 
     // Reduz a imagem no navegador: máx. 1920 px no lado maior, WebP (ou JPEG), até ~1,5 MB.
@@ -462,32 +478,41 @@ header nav{overflow-x:auto}
       });
     }
     async function reduzir(arquivo) {
-      const img = await carregarImagem(arquivo);
-      const w = img.width, h = img.height, escala = Math.min(1, 1920 / Math.max(w, h));
+      let img;
+      try { img = await carregarImagem(arquivo); }
+      catch { throw new Error(erroDeFormato(arquivo)); }
+      const w = img.width, h = img.height;
+      if (!w || !h) { if (img.close) img.close(); throw new Error(erroDeFormato(arquivo)); }
+      const escala = Math.min(1, 1920 / Math.max(w, h));
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(w * escala); canvas.height = Math.round(h * escala);
       const ctx = canvas.getContext('2d');
+      if (!ctx) { if (img.close) img.close(); throw new Error('Este navegador não conseguiu processar a imagem.'); }
       ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      if (img.close) img.close();
       const gerar = (tipo, q) => new Promise((ok) => canvas.toBlob(ok, tipo, q));
       let tipo = 'image/webp', q = 0.82, blob = await gerar(tipo, q);
       if (!blob || blob.type !== 'image/webp') { tipo = 'image/jpeg'; blob = await gerar(tipo, 0.85); q = 0.85; }
       while (blob && blob.size > 1_500_000 && q > 0.4) { q -= 0.1; blob = await gerar(tipo, q); }
-      if (!blob) throw new Error('falha');
+      if (!blob) throw new Error('Não foi possível converter a imagem. Tente outro arquivo.');
       return blob;
     }
     async function enviarArquivos(cat, lista) {
-      const arquivos = [...lista].filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
-      if (!arquivos.length) return toast('Selecione arquivos de imagem.', true);
+      const selecionados = [...lista];
+      // Aceita os formatos que o navegador abre. HEIC entra na lista para o Safari
+      // (que consegue abrir); nos demais navegadores o erro explica o que fazer.
+      const arquivos = selecionados.filter((f) => ehImagemAceita(f) || ehHeic(f));
+      const ignorados = selecionados.length - arquivos.length;
+      if (ignorados) toast(`${ignorados} arquivo(s) ignorado(s): use imagens JPG, PNG, WebP, GIF ou AVIF.`, true);
+      if (!arquivos.length) { if (!ignorados) toast('Selecione arquivos de imagem.', true); return; }
       const itens = arquivos.map((a) => ({ url: '', legenda: '', _enviando: true, _previa: URL.createObjectURL(a), _arquivo: a }));
       fotos[cat].push(...itens);
       enviando += itens.length;
       renderFotos();
       for (const item of itens) {
         try {
-          let blob;
-          try { blob = await reduzir(item._arquivo); }
-          catch { throw new Error(/\.(heic|heif)$/i.test(item._arquivo.name) ? 'HEIC não suportado neste navegador. Converta para JPG.' : 'Não foi possível ler esta imagem'); }
+          const blob = await reduzir(item._arquivo);
           const res = await fetch('/api/admin/fotos', {
             method: 'POST',
             headers: { Authorization: `Bearer ${sess.get()}`, 'Content-Type': blob.type, 'X-Nome-Arquivo': encodeURIComponent(item._arquivo.name) },
@@ -497,6 +522,9 @@ header nav{overflow-x:auto}
           const json = await res.json().catch(() => ({}));
           if (!json.ok) throw new Error(json.erro?.mensagem || 'Falha no envio');
           item.url = json.data.url;
+          const previaLocal = item._previa;
+          item._previa = json.data.url;
+          if (previaLocal) URL.revokeObjectURL(previaLocal);
         } catch (err) {
           item._erro = err.message;
         } finally {

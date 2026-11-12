@@ -144,7 +144,7 @@ No painel, em **Editar** viagem, cada categoria (Ônibus, Hospedagem, Destino) t
 
 Armazenamento: as fotos ficam no próprio banco D1 (cabem milhares de fotos reduzidas no plano gratuito). Para volumes maiores, ative o **R2** no painel da Cloudflare, crie o bucket `apollo-fotos` e descomente os blocos `r2_buckets` no `wrangler.toml` — as novas fotos passam a ir para o R2 automaticamente; as antigas continuam funcionando.
 
-Formatos: JPG, PNG e WebP. Fotos HEIC do iPhone funcionam no Safari; em outros navegadores, converta para JPG (ou ajuste o iPhone em *Ajustes → Câmera → Formatos → Mais Compatível*).
+Formatos: o seletor aceita **JPG, PNG, WebP, GIF, AVIF e BMP** — formatos que o navegador consegue abrir. A imagem é sempre convertida no navegador para **WebP** (ou JPEG, quando o navegador não gera WebP) antes do envio, então a página funciona em qualquer navegador. Fotos **HEIC** do iPhone funcionam no Safari; nos demais navegadores, converta para JPG (ou ajuste o iPhone em *Ajustes → Câmera → Formatos → Mais Compatível*).
 
 ## Acesso ao painel: master, usuários e permissões
 
