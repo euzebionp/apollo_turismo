@@ -54,7 +54,19 @@ export interface ViagemRow {
   programacao_json: string;
   fotos_json: string;
   ativa: number;
+  situacao: SituacaoViagem;
+  layout_json: string | null;
+  pontos_embarque_json: string;
+  inclusos_json: string;
+  politica_cancelamento: string | null;
+  grupo_whatsapp: string | null;
+  motorista_nome: string | null;
+  motorista_whatsapp: string | null;
+  veiculo_descricao: string | null;
+  motivo_cancelamento: string | null;
 }
+
+export type SituacaoViagem = 'RASCUNHO' | 'PUBLICADA' | 'CONCLUIDA' | 'CANCELADA';
 
 export interface ReservaRow {
   id: string;
@@ -70,4 +82,11 @@ export interface ReservaRow {
   expira_em: string;
   confirmado_em: string | null;
   criado_em: string;
+  poltrona: number | null;
+  ponto_embarque_id: string | null;
+  ponto_embarque_nome: string | null;
+  valor_total_centavos: number | null;
+  politica_aceita: string | null;
+  desistencia_em: string | null;
+  desistencia_motivo: string | null;
 }

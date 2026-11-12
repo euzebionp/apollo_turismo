@@ -23,6 +23,9 @@ export interface DadosReserva {
   telefone: string;
   email: string;
   turnstile_token: string;
+  poltrona: number | null;
+  ponto_embarque_id: string | null;
+  aceite_politica: boolean;
 }
 
 export type ResultadoValidacao = { ok: true; dados: DadosReserva } | { ok: false; campos: Record<string, string> };
@@ -48,6 +51,10 @@ export function validarReserva(body: any): ResultadoValidacao {
   if (!/^[1-9]{2}9?\d{8}$/.test(telefone)) campos.telefone = 'Celular com DDD';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120) campos.email = 'E-mail inválido';
   if (body?.aceite_lgpd !== true) campos.aceite_lgpd = 'É preciso aceitar a política de privacidade';
+  const poltrona = body?.poltrona === null || body?.poltrona === undefined || body?.poltrona === '' ? null : Number(body.poltrona);
+  if (poltrona !== null && (!Number.isInteger(poltrona) || poltrona < 1 || poltrona > 200)) campos.poltrona = 'Poltrona inválida';
+  const ponto = body?.ponto_embarque_id ? String(body.ponto_embarque_id) : null;
+  if (ponto !== null && !/^[a-z0-9]{4,16}$/.test(ponto)) campos.ponto_embarque_id = 'Ponto de embarque inválido';
 
   if (Object.keys(campos).length) return { ok: false, campos };
   return {
@@ -62,6 +69,9 @@ export function validarReserva(body: any): ResultadoValidacao {
       telefone,
       email,
       turnstile_token: String(body?.turnstile_token ?? ''),
+      poltrona,
+      ponto_embarque_id: ponto,
+      aceite_politica: body?.aceite_politica === true,
     },
   };
 }

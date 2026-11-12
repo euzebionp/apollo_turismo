@@ -9,6 +9,7 @@
     "db:migrate:remote": "wrangler d1 migrations apply apollo-reservas-db --remote",
     "db:seed:local": "wrangler d1 execute apollo-reservas-db --local --file=seed/viagem-exemplo.sql",
     "test": "node scripts/teste-e2e.mjs",
+    "test:operacao": "node scripts/teste-operacao.mjs",
     "deploy": "wrangler deploy --env production"
   },
   "license": "ISC",

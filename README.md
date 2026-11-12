@@ -178,6 +178,29 @@ npx wrangler d1 execute apollo-reservas-db --remote --command "DELETE FROM sesso
 - **Preços:** mudar o preço no painel vale só para reservas novas; as feitas mantêm o valor pago.
 - **LGPD:** CPF e RG cifrados com AES-256-GCM; CPF também guardado como HMAC para busca. Logs não registram dados pessoais; cada exportação do manifesto é registrada.
 
+## Operação da viagem (migração 0004)
+
+Antes de usar (local, homologação e produção): `npm run db:migrate:local` e/ou `npm run db:migrate:remote`. Nada é apagado; viagens antigas continuam funcionando sem mapa e sem pontos.
+
+**Para o passageiro**
+- **Mapa de poltronas:** com o mapa ligado na viagem, o passageiro escolhe a poltrona. Duas reservas ativas nunca ficam com a mesma poltrona (índice único no banco; testado com 10 pedidos simultâneos na mesma poltrona: só um leva).
+- **Pontos de embarque** com horário; o passageiro escolhe um ao reservar.
+- **Inclusos** e **política de cancelamento**: a política precisa ser aceita, e o texto aceito fica guardado na reserva.
+- **Página da reserva** (`/r/<id>`): status, poltrona, embarque, quanto foi pago e quanto falta, **Pix do saldo** (vale 1 hora), grupo do WhatsApp (só para quem pagou), nome do motorista (2 dias antes) e **pedido de desistência**.
+- **Prévia do link** no WhatsApp/Facebook com título, data e foto da viagem.
+- Viagem sem sinal: use **Sem sinal** no editor (sinal = integral) e o site oferece só o pagamento integral.
+
+**No painel**
+- **Situação da viagem:** rascunho (fora do site) → publicada → concluída, ou **cancelada** (cancela todas as reservas e manda o que foi pago para Pendências). **Duplicar** cria uma cópia em rascunho com nova data.
+- **Reservas:** registrar pagamento à mão, aprovar/recusar desistência e copiar o link da reserva.
+- **Lista de embarque** por ponto, com quanto falta receber de cada um (imprime para o motorista).
+- **Mensagens no WhatsApp:** fila com texto pronto (link da reserva, lembrete de embarque, mudança de embarque, cobrança do saldo).
+- **Cobranças:** quem ainda deve, em todas as viagens.
+- **Financeiro da viagem:** recebido, a receber, despesas e "já se pagou?".
+- Permissões novas: `pagamentos.registrar` e `despesas.editar`.
+
+Teste automático: `BASE=http://localhost:8787 MASTER_SENHA=... npm run test:operacao` (aumente o limite de reservas por IP antes, como no `npm test`).
+
 ## Lista para ANTT e DER
 
 No painel, **Lista ANTT/DER** em cada viagem gera a relação de passageiros confirmados com Nome, RG, órgão emissor e CPF (o modelo DER acrescenta o telefone). Exporta em CSV (abre no Excel) ou em versão para impressão/PDF com cabeçalho da viagem e campos para veículo, motorista e assinaturas. As colunas são ajustáveis: confira o leiaute exigido pela ANTT e pelo DER do seu estado e marque as colunas correspondentes.

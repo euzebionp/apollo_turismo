@@ -13,6 +13,8 @@ export const PERMISSOES: Record<string, string> = {
   'manifesto.exportar': 'Gerar lista ANTT/DER (CPF e RG completos)',
   'financeiro.ver': 'Ver valores recebidos e pendências de estorno',
   'financeiro.estornar': 'Registrar estornos realizados',
+  'pagamentos.registrar': 'Registrar pagamentos recebidos em mãos ou por transferência',
+  'despesas.editar': 'Lançar e apagar despesas da viagem (financeiro)',
   'auditoria.ver': 'Ver o registro de atividades do painel',
 };
 export const PERMISSAO_MASTER = 'usuarios.gerenciar';

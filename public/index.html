@@ -3,18 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Apollo Turismo — Reservas</title>
-<meta name="description" content="Reserve sua vaga nas excursões rodoviárias da Apollo Turismo com pagamento via Pix.">
-<meta name="theme-color" content="#14213d">
+<title>Expresso Apollo Turismo — Reservas</title>
+<meta name="description" content="Excursões rodoviárias da Expresso Apollo Turismo: escolha sua poltrona e reserve com Pix. Mais credibilidade a cada viagem!">
+<meta name="theme-color" content="#0c1f5e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Expresso Apollo Turismo">
+<meta property="og:title" content="Expresso Apollo Turismo — Excursões e fretamentos">
+<meta property="og:description" content="Escolha sua poltrona e reserve com Pix. Mais credibilidade a cada viagem!">
+<meta property="og:image" content="/img/banner.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/logo-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/img/logo-192.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --noite:#14213d; --noite-2:#1d2f55; --sol:#f59e0b; --sol-escuro:#c2410c; --areia:#fbf7f0;
-  --tinta:#1b1f2a; --tinta-2:#5b6272; --linha:#e7e1d6; --branco:#fff; --ok:#15803d; --erro:#b91c1c;
-  --raio:18px; --sombra:0 12px 32px -12px rgba(20,33,61,.28);
-  --display:'Bricolage Grotesque',system-ui,sans-serif; --texto:'Inter',system-ui,sans-serif;
+  --noite:#0c1f5e; --noite-2:#1b3fae; --sol:#d3141c; --sol-hover:#e8222b; --sol-escuro:#a50f16; --areia:#f6f7fb;
+  --tinta:#141b33; --tinta-2:#525b74; --linha:#dfe3ee; --branco:#fff; --ok:#15803d; --erro:#b91c1c;
+  --raio:18px; --sombra:0 12px 32px -12px rgba(12,31,94,.3);
+  --display:'Barlow Condensed',system-ui,sans-serif; --texto:'Inter',system-ui,sans-serif;
+  --tricolor:linear-gradient(180deg,#d3141c 0 45%,#fff 45% 60%,#1b3fae 60% 100%);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -27,24 +36,28 @@ button{font:inherit;cursor:pointer}
 
 /* topo */
 .topo{position:sticky;top:0;z-index:20;background:rgba(20,33,61,.92);backdrop-filter:blur(8px);color:#fff}
-.topo .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-.marca{font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-.02em;text-decoration:none;display:flex;gap:.5rem;align-items:center}
-.marca svg{width:26px;height:26px}
+.topo .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.marca{font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;font-size:1.3rem;letter-spacing:.01em;text-decoration:none;display:flex;gap:.6rem;align-items:center;line-height:1}
+.marca img{width:46px;height:46px;border-radius:50%;background:#fff;flex:none}
+.marca small{display:block;font-family:var(--texto);font-style:normal;text-transform:none;font-weight:500;font-size:.68rem;letter-spacing:0;opacity:.8;margin-top:2px}
+body::before{content:"";display:block;height:9px;background:var(--tricolor)}
 .topo a.zap{font-size:.9rem;font-weight:600;text-decoration:none;display:flex;gap:.4rem;align-items:center;padding:.45rem .8rem;border:1px solid rgba(255,255,255,.25);border-radius:999px}
 
 /* hero */
 .hero{position:relative;color:#fff;min-height:min(78vh,640px);display:flex;align-items:flex-end;background:var(--noite) center/cover no-repeat;isolation:isolate}
-.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(20,33,61,.15) 0%,rgba(20,33,61,.55) 45%,rgba(20,33,61,.95) 100%)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(12,31,94,.35) 0%,rgba(12,31,94,.65) 45%,rgba(12,31,94,.96) 100%)}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:9px;background:var(--tricolor)}
 .hero .wrap{padding:96px 0 40px}
 .eyebrow{display:inline-flex;align-items:center;gap:.45rem;font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sol)}
-.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,8vw,4.4rem);line-height:1.02;letter-spacing:-.03em;margin:.4rem 0 1rem;max-width:14ch;text-wrap:balance}
+.hero .eyebrow{color:#fff;background:var(--sol);padding:.25rem .65rem;border-radius:6px}
+.hero h1{font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;font-size:clamp(2.4rem,9vw,4.8rem);line-height:.98;letter-spacing:0;margin:.5rem 0 1rem;max-width:16ch;text-wrap:balance}
 .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
 .chip{display:inline-flex;gap:.4rem;align-items:center;font-size:.9rem;font-weight:500;padding:.45rem .8rem;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
-.chip.alerta{background:var(--sol);color:var(--noite);border-color:var(--sol);font-weight:700}
+.chip.alerta{background:var(--sol);color:#fff;border-color:var(--sol);font-weight:700}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;border-radius:14px;padding:.95rem 1.4rem;font-weight:700;font-size:1rem;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s}
 .btn:active{transform:translateY(1px)}
-.btn-sol{background:var(--sol);color:var(--noite);box-shadow:0 10px 24px -10px rgba(245,158,11,.8)}
-.btn-sol:hover{background:#fbb02f}
+.btn-sol{background:var(--sol);color:#fff;box-shadow:0 10px 24px -10px rgba(211,20,28,.75)}
+.btn-sol:hover{background:var(--sol-hover)}
 .btn-noite{background:var(--noite);color:#fff}
 .btn-noite:hover{background:var(--noite-2)}
 .btn-borda{background:transparent;color:var(--noite);border:1.5px solid var(--linha)}
@@ -54,7 +67,9 @@ button{font:inherit;cursor:pointer}
 
 /* seções */
 section{padding:56px 0}
-.titulo-secao{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);letter-spacing:-.02em;line-height:1.1;margin:0 0 .4rem}
+.titulo-secao{font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;font-size:clamp(1.9rem,5vw,2.7rem);letter-spacing:.005em;line-height:1;margin:0 0 .5rem;color:var(--noite)}
+.titulo-secao em{color:var(--sol);font-style:inherit}
+.precos .titulo-secao em{color:#ff6b70}
 .sub{color:var(--tinta-2);margin:0 0 1.75rem;max-width:60ch}
 .sobre p{font-size:1.08rem;max-width:62ch;margin:0}
 .fatos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:1.5rem}
@@ -66,8 +81,8 @@ section{padding:56px 0}
 .dias{display:grid;gap:12px}
 .dia{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);overflow:hidden}
 .dia>button{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:1rem;padding:1rem 1.15rem;cursor:pointer}
-.dia>button:focus-visible{outline:3px solid var(--sol);outline-offset:-3px}
-.num{flex:none;width:46px;height:46px;border-radius:14px;background:var(--noite);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;line-height:1}
+.dia>button:focus-visible{outline:3px solid var(--noite-2);outline-offset:-3px}
+.num{flex:none;width:46px;height:46px;border-radius:14px;background:var(--noite-2);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;line-height:1}
 .num small{display:block;font-size:.58rem;letter-spacing:.1em;font-family:var(--texto);font-weight:600;opacity:.75}
 .dia h3{margin:0;font-size:1.05rem}
 .dia .seta{margin-left:auto;transition:transform .2s}
@@ -86,7 +101,7 @@ section{padding:56px 0}
 .foto img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .foto:hover img{transform:scale(1.04)}
 .foto span{position:absolute;left:0;right:0;bottom:0;padding:1.4rem .8rem .6rem;color:#fff;font-size:.88rem;font-weight:500;background:linear-gradient(transparent,rgba(0,0,0,.65))}
-.foto:focus-visible{outline:3px solid var(--sol);outline-offset:2px}
+.foto:focus-visible{outline:3px solid var(--noite-2);outline-offset:2px}
 .vazio{color:var(--tinta-2);padding:1rem 0}
 
 /* preços */
@@ -97,12 +112,13 @@ section{padding:56px 0}
 .vagas-topo{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.6rem;font-weight:600}
 .vagas-topo strong{font-family:var(--display);font-size:1.5rem;color:var(--sol)}
 .barra{height:12px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}
-.barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sol),#fb923c);border-radius:inherit;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sol),#ff5a5f);border-radius:inherit;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.vagas-topo strong{color:#fff!important}
 .vagas small{display:block;margin-top:.5rem;color:#c6cde0}
 .planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
 .plano{background:#fff;color:var(--tinta);border-radius:22px;padding:1.4rem;display:flex;flex-direction:column;gap:.75rem;position:relative;border:2px solid transparent}
 .plano.destaque{border-color:var(--sol)}
-.selo{position:absolute;top:-12px;right:16px;background:var(--sol);color:var(--noite);font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .65rem;border-radius:999px}
+.selo{position:absolute;top:-12px;right:16px;background:var(--sol);color:#fff;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .65rem;border-radius:999px}
 .plano h3{margin:0;font-size:1.05rem}
 .valor{font-family:var(--display);font-weight:800;font-size:2.3rem;letter-spacing:-.02em;line-height:1}
 .valor small{font-size:1rem;font-weight:600;color:var(--tinta-2);font-family:var(--texto)}
@@ -115,15 +131,37 @@ section{padding:56px 0}
 .lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
 .card-viagem{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:1.25rem;text-decoration:none;display:flex;flex-direction:column;gap:.35rem;transition:box-shadow .2s,transform .2s}
 .card-viagem:hover{box-shadow:var(--sombra);transform:translateY(-2px)}
-.card-viagem h3{margin:0;font-family:var(--display);font-size:1.3rem}
+.card-viagem h3{margin:0;font-family:var(--display);font-style:italic;text-transform:uppercase;font-size:1.55rem;line-height:1;color:var(--noite)}
 .card-viagem .meta{color:var(--tinta-2);font-size:.92rem}
 
-footer{background:var(--noite);color:#c6cde0;padding:36px 0 calc(36px + env(safe-area-inset-bottom));font-size:.9rem;margin-top:24px}
+footer{background:var(--noite);color:#c6cde0;padding:0 0 calc(36px + env(safe-area-inset-bottom));font-size:.9rem;margin-top:24px}
+footer::before{content:"";display:block;height:9px;background:var(--tricolor);margin-bottom:32px}
 footer a{color:#fff}
+.rodape{display:grid;grid-template-columns:auto 1fr;gap:1.25rem 1.5rem;align-items:start}
+.rodape img{width:110px;height:110px;border-radius:50%;background:#fff}
+.rodape .nome{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;font-size:1.6rem;color:#fff;display:block;line-height:1}
+.rodape p{margin:.35rem 0}
+.rodape .lgpd{grid-column:1/-1;font-size:.8rem;opacity:.8;border-top:1px solid rgba(255,255,255,.12);padding-top:1rem}
+@media (max-width:560px){.rodape{grid-template-columns:1fr}.rodape img{width:90px;height:90px}}
+/* home */
+.banner-home{background:var(--noite);position:relative}
+.banner-home img{width:100%;max-width:1100px;height:auto;margin:0 auto}
+.banner-home::after{content:"";position:absolute;left:0;right:0;bottom:0;height:9px;background:var(--tricolor)}
+.slogan{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;color:var(--sol);font-size:1.3rem;margin:0 0 .2rem;letter-spacing:.02em}
+.diferenciais{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:10px;list-style:none;padding:0;margin:0}
+.diferenciais li{background:#fff;border:1px solid var(--linha);border-left:4px solid var(--sol);border-radius:12px;padding:.85rem 1rem;font-weight:600;color:var(--noite)}
+.diferenciais li span{display:block;font-size:1.4rem;margin-bottom:.2rem}
+.sobre-empresa{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2rem;align-items:center;background:#fff;border:1px solid var(--linha);border-radius:24px;padding:clamp(1.25rem,4vw,2.25rem)}
+.sobre-empresa img{width:min(220px,45vw);height:auto}
+.sobre-empresa p{color:var(--tinta-2);max-width:60ch}
+@media (max-width:640px){.sobre-empresa{grid-template-columns:1fr;text-align:center}.sobre-empresa img{margin:0 auto;grid-row:1}}
 
 /* barra fixa mobile */
 .cta-fixo{position:fixed;inset:auto 0 0 0;z-index:15;background:#fff;border-top:1px solid var(--linha);padding:.7rem 16px calc(.7rem + env(safe-area-inset-bottom));display:flex;align-items:center;gap:1rem;transform:translateY(110%);transition:transform .25s}
 .cta-fixo.visivel{transform:none}
+.cta-fixo[hidden]{display:none}
+.topo a.zap{white-space:nowrap}
+@media (max-width:480px){.marca{font-size:1.05rem}.marca img{width:40px;height:40px}.marca small{display:none}.topo a.zap span{display:none}}
 .cta-fixo div{flex:1;line-height:1.2}
 .cta-fixo small{color:var(--tinta-2);font-size:.78rem}
 .cta-fixo strong{display:block;font-family:var(--display);font-size:1.25rem}
@@ -134,7 +172,7 @@ dialog{border:0;padding:0;border-radius:24px;width:min(520px,100% - 24px);max-he
 dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 @media (max-width:560px){dialog.checkout{width:100%;max-width:100%;max-height:94dvh;margin:auto 0 0;border-radius:24px 24px 0 0}}
 .dlg-topo{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem .4rem}
-.dlg-topo h2{margin:0;font-family:var(--display);font-size:1.35rem;letter-spacing:-.01em}
+.dlg-topo h2{margin:0;font-family:var(--display);font-style:italic;text-transform:uppercase;font-size:1.6rem;color:var(--noite)}
 .fechar{border:0;background:var(--areia);width:38px;height:38px;border-radius:12px;font-size:1.3rem;line-height:1}
 .dlg-corpo{padding:.4rem 1.25rem 1.4rem}
 .resumo{display:flex;justify-content:space-between;gap:1rem;background:var(--areia);border-radius:14px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.92rem}
@@ -143,7 +181,7 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 .tipo label{border:1.5px solid var(--linha);border-radius:14px;padding:.7rem .8rem;cursor:pointer;display:block}
 .tipo input{position:absolute;opacity:0}
 .tipo label:has(input:checked){border-color:var(--noite);background:#f2f4fa}
-.tipo label:has(input:focus-visible){outline:3px solid var(--sol)}
+.tipo label:has(input:focus-visible){outline:3px solid var(--noite-2)}
 .tipo b{display:block;font-size:.95rem}
 .tipo span{font-size:.85rem;color:var(--tinta-2)}
 .campo{margin-bottom:.8rem}
@@ -163,7 +201,7 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 #ts-box{margin:.25rem 0 .8rem;min-height:0}
 
 .pix{text-align:center}
-.contador{display:inline-flex;align-items:center;gap:.5rem;background:#fff7ed;color:var(--sol-escuro);font-weight:700;border-radius:999px;padding:.4rem .9rem;font-variant-numeric:tabular-nums;margin-bottom:1rem}
+.contador{display:inline-flex;align-items:center;gap:.5rem;background:#eef2ff;color:var(--noite-2);font-weight:700;border-radius:999px;padding:.4rem .9rem;font-variant-numeric:tabular-nums;margin-bottom:1rem}
 .contador.critico{background:#fef2f2;color:var(--erro)}
 .qr{width:min(240px,70vw);aspect-ratio:1;margin:0 auto 1rem;border:1px solid var(--linha);border-radius:16px;padding:10px;background:#fff}
 .qr img{width:100%;height:100%;object-fit:contain}
@@ -172,7 +210,7 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 .passos{text-align:left;font-size:.88rem;color:var(--tinta-2);padding-left:1.1rem;margin:1rem 0}
 .estado{display:flex;align-items:center;justify-content:center;gap:.5rem;font-size:.9rem;color:var(--tinta-2);margin:.5rem 0 1rem}
 .pulso{width:9px;height:9px;border-radius:50%;background:var(--sol);animation:pulso 1.4s infinite}
-@keyframes pulso{0%{box-shadow:0 0 0 0 rgba(245,158,11,.6)}70%{box-shadow:0 0 0 10px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
+@keyframes pulso{0%{box-shadow:0 0 0 0 rgba(211,20,28,.6)}70%{box-shadow:0 0 0 10px rgba(211,20,28,0)}100%{box-shadow:0 0 0 0 rgba(211,20,28,0)}}
 .voucher{text-align:center}
 .voucher .icone{width:68px;height:68px;border-radius:50%;background:#dcfce7;color:var(--ok);display:grid;place-items:center;margin:0 auto 1rem;font-size:2rem}
 .voucher .codigo{font-family:var(--display);font-weight:800;font-size:2rem;letter-spacing:.08em;background:var(--areia);border:2px dashed var(--linha);border-radius:16px;padding:.7rem;margin:1rem 0}
@@ -189,8 +227,68 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 .carregando{min-height:70vh;display:grid;place-items:center;color:var(--tinta-2)}
 .spinner{width:36px;height:36px;border-radius:50%;border:3px solid var(--linha);border-top-color:var(--noite);animation:gira .8s linear infinite;margin:0 auto 1rem}
 @keyframes gira{to{transform:rotate(360deg)}}
+
+/* busca e cards com foto */
+.busca{display:grid;grid-template-columns:1fr auto;gap:8px;background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:8px;margin-bottom:1.25rem;max-width:640px}
+.busca input,.busca select{font:inherit;font-size:16px;border:0;background:var(--areia);border-radius:12px;padding:.75rem .9rem;color:var(--tinta);min-width:0}
+.busca input:focus,.busca select:focus{outline:2px solid var(--noite)}
+.card-viagem{padding:0;overflow:hidden}
+.card-viagem .capa{aspect-ratio:16/9;background:var(--linha) center/cover no-repeat}
+.card-viagem .corpo{padding:1rem 1.15rem 1.2rem;display:flex;flex-direction:column;gap:.3rem}
+
+/* inclusos, embarque, política */
+.inclusos{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.inclusos li{background:#fff;border:1px solid var(--linha);border-radius:999px;padding:.45rem .9rem;font-weight:500;font-size:.94rem}
+.inclusos li::before{content:"✓ ";color:var(--ok);font-weight:800}
+.pontos{display:grid;gap:10px}
+.ponto{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:.9rem 1.1rem;display:flex;gap:1rem;align-items:center}
+.ponto time{flex:none;font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--sol-escuro);min-width:4.2rem;font-variant-numeric:tabular-nums}
+.ponto small{display:block;color:var(--tinta-2)}
+details.politica{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:1rem 1.15rem}
+details.politica summary{font-weight:700;cursor:pointer}
+details.politica p{white-space:pre-line;color:var(--tinta-2);margin:.75rem 0 0}
+
+/* mapa de poltronas */
+.legenda{display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-size:.82rem;color:var(--tinta-2);margin:.2rem 0 .9rem}
+.legenda span{display:inline-flex;align-items:center;gap:.35rem}
+.legenda i{width:16px;height:16px;border-radius:5px;display:inline-block;border:1.5px solid var(--linha);background:#fff}
+.legenda i.oc{background:#e5e7eb;border-color:#e5e7eb}.legenda i.sel{background:var(--sol);border-color:var(--sol)}
+.onibus{background:var(--areia);border:2px solid var(--linha);border-radius:28px 28px 14px 14px;padding:14px 12px 16px;max-width:300px;margin:0 auto 1rem}
+.onibus .frente{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:var(--tinta-2);text-transform:uppercase;letter-spacing:.08em;padding:0 4px 10px;border-bottom:1px dashed var(--linha);margin-bottom:10px}
+.fileira{display:grid;gap:6px;margin-bottom:6px}
+.poltrona{aspect-ratio:1;border:1.5px solid #cbd5e1;background:#fff;border-radius:8px 8px 5px 5px;font-weight:700;font-size:.82rem;color:var(--tinta);padding:0;font-variant-numeric:tabular-nums}
+.poltrona:hover:not([disabled]){border-color:var(--noite)}
+.poltrona[aria-pressed="true"]{background:var(--sol);border-color:var(--sol);color:#fff}
+.poltrona[disabled]{background:#e5e7eb;border-color:#e5e7eb;color:#9ca3af;cursor:not-allowed}
+.poltrona.bloq{visibility:hidden}
+.corredor{width:14px}
+.escolhida{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--areia);border-radius:14px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.92rem}
+.escolhida b{font-family:var(--display);font-size:1.15rem}
+.link-btn{border:0;background:none;color:var(--noite);font-weight:700;text-decoration:underline;padding:0}
+.campo select{width:100%;font:inherit;font-size:16px;padding:.8rem .9rem;border:1.5px solid var(--linha);border-radius:12px;background:#fff;color:var(--tinta)}
+.campo[data-erro] select{border-color:var(--erro)}
+
+/* página da reserva */
+.reserva{max-width:640px;margin:0 auto}
+.reserva .banner{height:150px;border-radius:var(--raio) var(--raio) 0 0;background:var(--noite) center/cover no-repeat}
+.cartao-r{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:1.25rem;margin-bottom:14px}
+.reserva .banner+.cartao-r{border-radius:0 0 var(--raio) var(--raio);border-top:0}
+.cartao-r h2{font-family:var(--display);font-size:1.15rem;margin:0 0 .8rem}
+.status{display:inline-block;font-weight:800;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:.3rem .75rem}
+.st-CONFIRMADO{background:#dcfce7;color:var(--ok)}.st-PENDENTE{background:#fef3c7;color:#b45309}
+.st-EXPIRADO,.st-CANCELADO{background:#f1f5f9;color:#475569}
+.lista-dl{display:grid;grid-template-columns:auto 1fr;gap:.45rem 1rem;margin:0;font-size:.95rem}
+.lista-dl dt{color:var(--tinta-2)}.lista-dl dd{margin:0;font-weight:600}
+.valores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.valores div{background:var(--areia);border-radius:12px;padding:.7rem .8rem}
+.valores small{display:block;color:var(--tinta-2);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.valores strong{font-family:var(--display);font-size:1.15rem}
+.alerta-box{background:#fffbeb;border:1px solid #fde68a;border-radius:14px;padding:.8rem 1rem;color:#78350f;font-size:.92rem;margin-bottom:14px}
+.alerta-box.erro{background:#fef2f2;border-color:#fecaca;color:var(--erro)}
+@media (max-width:520px){.valores{grid-template-columns:1fr 1fr}.valores div:last-child{grid-column:1/-1}}
 @media print{
-  body>*:not(#dlg-checkout){display:none!important}
+  body:has(#dlg-checkout[open])>*:not(#dlg-checkout){display:none!important}
+  .topo,footer,.cta-fixo,.pilha,#saldo-area{display:none!important}
   dialog{position:static;box-shadow:none;max-height:none;width:100%}
   .fechar,.pilha,dialog::backdrop{display:none!important}
 }
@@ -201,13 +299,13 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 
 <header class="topo">
   <div class="wrap">
-    <a class="marca" href="/" aria-label="Apollo Turismo — início">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#f59e0b"/><path d="M6 21c3-6 7-9 10-9s7 3 10 9" stroke="#14213d" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="16" cy="10" r="3" fill="#14213d"/></svg>
-      <span id="marca-nome">Apollo Turismo</span>
+    <a class="marca" href="/" aria-label="Expresso Apollo Turismo — início">
+      <img src="/img/logo-64.png" srcset="/img/logo-64.png 1x, /img/logo-192.png 2x" width="46" height="46" alt="">
+      <span><span id="marca-nome">Expresso Apollo Turismo</span><small>Mais credibilidade a cada viagem!</small></span>
     </a>
     <a class="zap" id="topo-zap" href="#" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.3.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l2 .9c.3.2.5.2.5.4.1.1.1.7-.1 1.3Z"/></svg>
-      Fale conosco
+      <span>Fale conosco</span>
     </a>
   </div>
 </header>
@@ -217,9 +315,17 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 </main>
 
 <footer>
-  <div class="wrap">
-    <p><strong id="rodape-nome">Apollo Turismo</strong> — excursões rodoviárias com fretamento autorizado.</p>
-    <p>Seus dados (nome, CPF, RG e telefone) são usados somente para emitir o manifesto de passageiros exigido pela ANTT/DER e para contato sobre a viagem. Para acessar, corrigir ou excluir seus dados, fale conosco pelo WhatsApp.</p>
+  <div class="wrap rodape">
+    <img src="/img/logo-192.png" width="110" height="110" alt="Logo Expresso Apollo Turismo" loading="lazy">
+    <div>
+      <span class="nome" id="rodape-nome">Expresso Apollo Turismo</span>
+      <p>Ônibus e micro-ônibus para fretamentos e excursões. Viaje com tranquilidade, chegue com confiança!</p>
+      <p>Rua Angelina da Silva Resende, 46 — Bom Retiro · Uberaba-MG</p>
+      <p>ANTT 52.9783 · Cadastur</p>
+      <p><a href="https://wa.me/5534997802345" target="_blank" rel="noopener">WhatsApp (34) 99780-2345</a> · <a href="mailto:expressoapolloturismooficial@gmail.com">expressoapolloturismooficial@gmail.com</a></p>
+      <p><a href="https://instagram.com/apolloturismo" target="_blank" rel="noopener">Instagram @apolloturismo</a> · <a href="https://facebook.com/apolloturismo" target="_blank" rel="noopener">Facebook /apolloturismo</a></p>
+    </div>
+    <p class="lgpd">Seus dados (nome, CPF, RG e telefone) são usados somente para emitir o manifesto de passageiros exigido pela ANTT/DER e para contato sobre a viagem. Para acessar, corrigir ou excluir seus dados, fale conosco pelo WhatsApp.</p>
   </div>
 </footer>
 
@@ -236,9 +342,19 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
   </div>
   <div class="dlg-corpo">
 
+    <!-- passo 0: poltrona (só quando a viagem tem mapa) -->
+    <div data-passo="poltrona" hidden>
+      <div class="erro-geral" id="erro-poltrona" role="alert"></div>
+      <p style="margin:0 0 .4rem;color:var(--tinta-2)">Toque numa poltrona livre. Ela fica só sua depois do Pix.</p>
+      <div class="legenda"><span><i></i>Livre</span><span><i class="oc"></i>Ocupada</span><span><i class="sel"></i>Sua escolha</span></div>
+      <div id="mapa-poltronas"></div>
+      <button class="btn btn-sol btn-bloco" type="button" id="btn-poltrona-ok" disabled>Escolha uma poltrona</button>
+    </div>
+
     <!-- passo 1: formulário -->
     <form id="form-reserva" novalidate data-passo="form">
       <div class="erro-geral" id="erro-geral" role="alert"></div>
+      <div class="escolhida" id="poltrona-escolhida" hidden><span>Poltrona <b id="poltrona-num">—</b></span><button class="link-btn" type="button" id="trocar-poltrona">Trocar</button></div>
       <fieldset style="border:0;padding:0;margin:0">
         <legend class="sr">Forma de pagamento</legend>
         <div class="tipo">
@@ -278,6 +394,15 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
         <input id="f-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required>
         <div class="msg"></div>
       </div>
+      <div class="campo" data-campo="ponto_embarque_id" id="campo-ponto" hidden>
+        <label for="f-ponto">Onde você vai embarcar</label>
+        <select id="f-ponto" name="ponto_embarque_id"></select>
+        <div class="msg"></div>
+      </div>
+      <label class="aceite" data-campo="aceite_politica" id="campo-politica" hidden>
+        <input type="checkbox" id="f-politica">
+        <span>Li e aceito a <a href="#politica" data-fechar>política de cancelamento</a> desta viagem.</span>
+      </label>
       <label class="aceite" data-campo="aceite_lgpd">
         <input type="checkbox" name="aceite_lgpd" id="f-aceite">
         <span>Autorizo o uso dos meus dados para emissão do manifesto de passageiros (ANTT/DER) e contato sobre esta viagem, conforme a LGPD.</span>
@@ -306,6 +431,7 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
       <div class="pilha">
         <a class="btn btn-zap" id="btn-comprovante" target="_blank" rel="noopener">Já paguei — enviar comprovante no WhatsApp</a>
         <button class="btn btn-borda" type="button" id="btn-simular" hidden>Simular pagamento (ambiente de teste)</button>
+        <a class="btn btn-borda" id="pix-link" href="#">Abrir a página da reserva (guarde este link)</a>
       </div>
     </div>
 
@@ -319,10 +445,14 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
         <dt>Viagem</dt><dd id="v-viagem">—</dd>
         <dt>Partida</dt><dd id="v-partida">—</dd>
         <dt>Embarque</dt><dd id="v-embarque">—</dd>
+        <dt id="v-poltrona-dt" hidden>Poltrona</dt><dd id="v-poltrona" hidden>—</dd>
         <dt>Pago</dt><dd id="v-pago">—</dd>
       </dl>
       <p class="aviso" id="v-saldo" hidden></p>
-      <div class="pilha"><button class="btn btn-noite" type="button" onclick="window.print()">Salvar / imprimir voucher</button></div>
+      <div class="pilha">
+        <a class="btn btn-sol" id="v-link" href="#">Acompanhar minha reserva</a>
+        <button class="btn btn-noite" type="button" onclick="window.print()">Salvar / imprimir voucher</button>
+      </div>
     </div>
 
     <!-- passo 4: expirado -->
@@ -369,7 +499,8 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
     return { status: res.status, json: json ?? { ok: false, erro: { mensagem: 'Resposta inválida do servidor' } } };
   }
 
-  const estado = { config: null, viagem: null, reserva: null, timers: [], turnstileToken: '', turnstileId: null };
+  const estado = { config: null, viagem: null, reserva: null, timers: [], turnstileToken: '', turnstileId: null, poltrona: null };
+  const hora = (iso) => new Date(iso).toLocaleTimeString('pt-BR', { ...tz, hour: '2-digit', minute: '2-digit' });
 
   // ---------- roteamento simples ----------
   function idDaUrl() {
@@ -389,6 +520,8 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
     $$('[data-minutos]').forEach((el) => (el.textContent = estado.config.reserva_minutos));
     $('#topo-zap').href = zapLink('Olá! Gostaria de informações sobre as excursões.');
 
+    const mr = location.pathname.match(/^\/r\/([0-9a-f-]{36})\/?$/i);
+    if (mr) return renderReserva(mr[1]);
     const id = idDaUrl();
     if (!id) return renderLista();
     const r = await api(`/api/viagem/${encodeURIComponent(id)}`);
@@ -408,33 +541,78 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
   }
 
   async function renderLista() {
+    $('#cta-fixo').hidden = true;
     const r = await api('/api/viagens');
     const lista = r.json.data ?? [];
-    document.title = `${estado.config.agencia_nome} — Próximas viagens`;
+    document.title = `${estado.config.agencia_nome} — Excursões e fretamentos`;
+    const mesDe = (iso) => new Date(iso).toLocaleDateString('pt-BR', { ...tz, month: 'long', year: 'numeric' });
+    const meses = [...new Set(lista.map((v) => mesDe(v.data_partida)))];
     $('#app').innerHTML = `
+      <div class="banner-home"><img src="/img/banner.webp" width="1280" height="853" alt="Ônibus da Expresso Apollo Turismo na estrada — Mais credibilidade a cada viagem!" fetchpriority="high"></div>
       <section><div class="wrap">
-        <h1 class="titulo-secao">Próximas viagens</h1>
-        <p class="sub">Escolha seu destino e reserve com Pix em poucos minutos.</p>
-        <div class="lista">${lista.length ? lista.map((v) => `
-          <a class="card-viagem" href="/viagem/${esc(v.id)}">
-            <span class="eyebrow">${esc(v.destino)}</span>
-            <h3>${esc(v.titulo)}</h3>
-            <span class="meta">${esc(dataLonga(v.data_partida))} · a partir de ${esc(reais(v.preco_sinal_centavos))}</span>
-            <span class="meta">${v.vagas_disponiveis > 0 ? `${v.vagas_disponiveis} vagas disponíveis` : '<b>Esgotada</b>'}</span>
-          </a>`).join('') : '<p class="vazio">Nenhuma viagem aberta no momento. Fale com a gente pelo WhatsApp!</p>'}
+        <p class="slogan">Mais credibilidade a cada viagem!</p>
+        <h1 class="titulo-secao">Próximas <em>viagens</em></h1>
+        <p class="sub">Escolha seu destino, garanta a poltrona e pague com Pix em poucos minutos.</p>
+        ${lista.length > 1 ? `<div class="busca" role="search">
+          <label class="sr" for="b-texto">Destino</label><input id="b-texto" type="search" placeholder="Buscar destino ou viagem" autocomplete="off">
+          <label class="sr" for="b-mes">Mês</label><select id="b-mes"><option value="">Qualquer mês</option>${meses.map((m) => `<option>${esc(m)}</option>`).join('')}</select>
+        </div>` : ''}
+        <div class="lista" id="lista"></div>
+      </div></section>
+      <section style="padding-top:0"><div class="wrap">
+        <h2 class="titulo-secao">Viaje com <em>conforto</em></h2>
+        <p class="sub">Viaje com tranquilidade, chegue com confiança!</p>
+        <ul class="diferenciais">
+          <li><span aria-hidden="true">💺</span>Conforto em cada poltrona</li>
+          <li><span aria-hidden="true">❄️</span>Ar-condicionado</li>
+          <li><span aria-hidden="true">🔌</span>Carregador USB em cada poltrona</li>
+          <li><span aria-hidden="true">🛡️</span>Segurança em primeiro lugar</li>
+          <li><span aria-hidden="true">🧳</span>Bagageiro espaçoso</li>
+          <li><span aria-hidden="true">🤝</span>Atendimento especializado</li>
+        </ul>
+      </div></section>
+      <section style="padding-top:0"><div class="wrap">
+        <div class="sobre-empresa">
+          <div>
+            <h2 class="titulo-secao">Sobre a <em>Apollo</em></h2>
+            <p>Desde 2015 a Expresso Apollo Turismo leva passageiros de Uberaba e região para os melhores destinos do Brasil, com ônibus e micro-ônibus para excursões e fretamentos. Empresa registrada na ANTT e no Cadastur.</p>
+            <a class="btn btn-sol" href="${esc(zapLink('Olá! Gostaria de um orçamento de fretamento.'))}" target="_blank" rel="noopener">Pedir orçamento de fretamento</a>
+          </div>
+          <img src="/img/selo-11-anos.webp" alt="Selo: 11 anos levando você mais longe, 2015–2026" loading="lazy">
         </div>
       </div></section>`;
+    const sem = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const desenhar = () => {
+      const t = sem($('#b-texto')?.value || ''), m = $('#b-mes')?.value || '';
+      const itens = lista.filter((v) => (!t || sem(`${v.titulo} ${v.destino}`).includes(t)) && (!m || mesDe(v.data_partida) === m));
+      $('#lista').innerHTML = itens.length ? itens.map((v) => `
+        <a class="card-viagem" href="/viagem/${esc(v.id)}">
+          <div class="capa" style="background-image:url('${esc(v.capa || '/img/banner.webp')}')"></div>
+          <div class="corpo">
+            <span class="eyebrow">${esc(v.destino)}</span>
+            <h3>${esc(v.titulo)}</h3>
+            <span class="meta">${esc(dataLonga(v.data_partida))} · a partir de ${esc(reais(Math.min(v.preco_sinal_centavos, v.preco_integral_centavos)))}</span>
+            <span class="meta">${v.vagas_disponiveis > 0 ? `${v.vagas_disponiveis} ${v.vagas_disponiveis === 1 ? 'lugar disponível' : 'lugares disponíveis'}` : '<b>Esgotada</b>'}</span>
+          </div>
+        </a>`).join('') : `<p class="vazio">${lista.length ? 'Nenhuma viagem com esse filtro.' : 'Nenhuma viagem aberta no momento. Fale com a gente pelo WhatsApp!'}</p>`;
+    };
+    $('#b-texto')?.addEventListener('input', desenhar);
+    $('#b-mes')?.addEventListener('change', desenhar);
+    desenhar();
   }
 
   // ---------- página da viagem ----------
   function renderViagem() {
     const v = estado.viagem;
     document.title = `${v.titulo} — ${estado.config.agencia_nome}`;
-    const capa = v.fotos?.destino?.[0]?.url || v.fotos?.hospedagem?.[0]?.url || '';
+    const capa = v.fotos?.destino?.[0]?.url || v.fotos?.hospedagem?.[0]?.url || v.fotos?.veiculo?.[0]?.url || '/img/banner.webp';
     const dias = v.programacao?.length || 0;
     const restantes = v.vagas_disponiveis;
     const pouco = restantes > 0 && restantes <= Math.max(5, Math.ceil(v.total_vagas * 0.15));
     const esgotado = restantes <= 0 || !v.vendas_abertas;
+    const temSinal = v.preco_sinal_centavos < v.preco_integral_centavos;
+    const pontos = v.pontos_embarque || [];
+    const inclusos = v.inclusos || [];
 
     $('#app').innerHTML = `
       <section class="hero" ${capa ? `style="background-image:url('${esc(capa)}')"` : ''}>
@@ -456,9 +634,25 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
         <div class="fatos">
           <div class="fato"><small>Saída</small><strong>${esc(dataHora(v.data_partida))}</strong></div>
           ${v.data_retorno ? `<div class="fato"><small>Retorno</small><strong>${esc(dataHora(v.data_retorno))}</strong></div>` : ''}
-          ${v.local_embarque ? `<div class="fato"><small>Embarque</small><strong>${esc(v.local_embarque)}</strong></div>` : ''}
+          ${pontos.length ? `<div class="fato"><small>Embarque</small><strong>${pontos.length === 1 ? esc(pontos[0].nome) : `${pontos.length} pontos de embarque`}</strong></div>`
+            : v.local_embarque ? `<div class="fato"><small>Embarque</small><strong>${esc(v.local_embarque)}</strong></div>` : ''}
+          ${v.layout ? '<div class="fato"><small>Poltrona</small><strong>Você escolhe no mapa</strong></div>' : ''}
         </div>
       </div></section>
+
+      ${inclusos.length ? `<section id="inclusos" style="padding-top:0"><div class="wrap">
+        <h2 class="titulo-secao">O que está incluso</h2>
+        <ul class="inclusos">${inclusos.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>
+      </div></section>` : ''}
+
+      ${pontos.length ? `<section id="embarque" style="padding-top:0"><div class="wrap">
+        <h2 class="titulo-secao">Pontos de embarque</h2>
+        <p class="sub">Você escolhe onde vai subir na hora de reservar.</p>
+        <div class="pontos">${pontos.map((p) => `<div class="ponto">
+          ${p.horario ? `<time>${esc(hora(p.horario))}</time>` : ''}
+          <div><strong>${esc(p.nome)}</strong>${p.endereco ? `<small>${esc(p.endereco)}</small>` : ''}${p.horario ? `<small>${esc(dataLonga(p.horario))}</small>` : ''}</div>
+        </div>`).join('')}</div>
+      </div></section>` : ''}
 
       ${dias ? `<section id="cronograma"><div class="wrap">
         <h2 class="titulo-secao">Roteiro dia a dia</h2>
@@ -495,12 +689,12 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
             <small>${esgotado ? 'Sem vagas no momento.' : pouco ? `Últimas ${restantes} vagas!` : `${restantes} vagas disponíveis`}</small>
           </div>
           <div class="planos">
-            <article class="plano">
+            ${temSinal ? `<article class="plano">
               <h3>Sinal</h3>
               <div class="valor">${esc(reais(v.preco_sinal_centavos))}</div>
-              <ul><li>Garante sua poltrona agora</li><li>Saldo de ${esc(reais(v.preco_integral_centavos - v.preco_sinal_centavos))} combinado com a agência</li></ul>
+              <ul><li>Garante sua poltrona agora</li><li>Saldo de ${esc(reais(v.preco_integral_centavos - v.preco_sinal_centavos))} pago depois, pelo Pix, na página da sua reserva</li></ul>
               <button class="btn btn-noite btn-bloco" type="button" data-abrir-checkout="SINAL" ${esgotado ? 'disabled' : ''}>Pagar sinal</button>
-            </article>
+            </article>` : ''}
             <article class="plano destaque">
               <span class="selo">Sem pendências</span>
               <h3>Pagamento integral</h3>
@@ -511,7 +705,11 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
           </div>
           <div class="esgotado">Vagas esgotadas. <a href="${esc(zapLink(`Olá! Quero entrar na lista de espera da viagem ${v.titulo}.`))}" target="_blank" rel="noopener">Entre na lista de espera pelo WhatsApp</a>.</div>
         </div>
-      </div></section>`;
+      </div></section>
+
+      ${v.politica_cancelamento ? `<section id="politica" style="padding-top:0"><div class="wrap">
+        <details class="politica"><summary>Política de cancelamento</summary><p>${esc(v.politica_cancelamento)}</p></details>
+      </div></section>` : ''}`;
 
     // interações
     $$('.dia > button').forEach((b) => b.addEventListener('click', () => {
@@ -526,7 +724,12 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
       if (el) el.style.width = `${Math.min(100, (v.vagas_ocupadas / v.total_vagas) * 100)}%`;
     }, 120));
 
-    $('#cta-preco').textContent = reais(v.preco_sinal_centavos);
+    $('#cta-fixo').hidden = false;
+    $('#cta-preco').textContent = reais(Math.min(v.preco_sinal_centavos, v.preco_integral_centavos));
+    if (!temSinal) $('input[name="tipo_pagamento"][value="INTEGRAL"]').checked = true;
+    $('input[name="tipo_pagamento"][value="SINAL"]').closest('label').hidden = !temSinal;
+    $('.tipo').style.gridTemplateColumns = temSinal ? '' : '1fr';
+    prepararCamposViagem();
     const cta = $('#cta-fixo');
     if (!esgotado) {
       const io = new IntersectionObserver(([e]) => { cta.classList.toggle('visivel', !e.isIntersecting); cta.setAttribute('aria-hidden', String(e.isIntersecting)); });
@@ -555,7 +758,62 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
 
   function passo(nome) {
     $$('[data-passo]', dlg).forEach((el) => (el.hidden = el.dataset.passo !== nome));
-    $('#dlg-titulo').textContent = { form: 'Reservar vaga', pix: 'Pague com Pix', ok: 'Tudo certo!', expirado: 'Reserva expirada' }[nome];
+    $('#dlg-titulo').textContent = { poltrona: 'Escolha sua poltrona', form: 'Seus dados', pix: 'Pague com Pix', ok: 'Tudo certo!', expirado: 'Reserva expirada' }[nome];
+    if (nome === 'poltrona') desenharMapa();
+    if (nome === 'form') {
+      const p = estado.poltrona;
+      $('#poltrona-escolhida').hidden = !estado.viagem?.layout || !p;
+      $('#poltrona-num').textContent = p ?? '—';
+    }
+  }
+
+  // ---------- mapa de poltronas ----------
+  // Numeração da frente para o fundo, da esquerda para a direita (1 e 4 na janela no 2-2).
+  const COLUNAS = { '2-2': [2, 2], '2-1': [2, 1], '1-1': [1, 1] };
+  function desenharMapa() {
+    const v = estado.viagem, l = v?.layout;
+    if (!l) return;
+    const [esq, dir] = COLUNAS[l.tipo] || [2, 2];
+    const porFileira = esq + dir;
+    const ocupadas = new Set(v.poltronas_ocupadas || []), bloq = new Set(l.bloqueadas || []);
+    if (ocupadas.has(estado.poltrona) || bloq.has(estado.poltrona)) estado.poltrona = null;
+    const colunas = `${'1fr '.repeat(esq)}14px ${'1fr '.repeat(dir)}`.trim();
+    let html = '<div class="onibus" role="group" aria-label="Mapa de poltronas"><div class="frente"><span>Frente</span><span>🚍 Motorista</span></div>';
+    for (let ini = 1; ini <= l.poltronas; ini += porFileira) {
+      const cel = [];
+      for (let k = 0; k < porFileira; k++) {
+        if (k === esq) cel.push('<span class="corredor"></span>');
+        const n = ini + k;
+        if (n > l.poltronas) { cel.push('<span></span>'); continue; }
+        if (bloq.has(n)) { cel.push('<span class="poltrona bloq" aria-hidden="true"></span>'); continue; }
+        const oc = ocupadas.has(n);
+        cel.push(`<button type="button" class="poltrona" data-poltrona="${n}" aria-pressed="${estado.poltrona === n}" ${oc ? 'disabled' : ''} aria-label="Poltrona ${n}${oc ? ', ocupada' : ''}">${n}</button>`);
+      }
+      html += `<div class="fileira" style="grid-template-columns:${colunas}">${cel.join('')}</div>`;
+    }
+    $('#mapa-poltronas').innerHTML = html + '</div>';
+    const b = $('#btn-poltrona-ok');
+    b.disabled = !estado.poltrona;
+    b.textContent = estado.poltrona ? `Continuar com a poltrona ${estado.poltrona}` : 'Escolha uma poltrona';
+  }
+  $('#mapa-poltronas').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-poltrona]');
+    if (!b || b.disabled) return;
+    estado.poltrona = Number(b.dataset.poltrona);
+    desenharMapa();
+  });
+  $('#btn-poltrona-ok').addEventListener('click', () => { if (estado.poltrona) { $('#erro-poltrona').classList.remove('visivel'); passo('form'); } });
+  $('#trocar-poltrona').addEventListener('click', () => passo('poltrona'));
+
+  // Ponto de embarque e política de cancelamento, quando a viagem tiver.
+  function prepararCamposViagem() {
+    const v = estado.viagem, pontos = v.pontos_embarque || [];
+    const sel = $('#f-ponto'), atual = sel.value;
+    $('#campo-ponto').hidden = !pontos.length;
+    sel.innerHTML = (pontos.length > 1 ? '<option value="">Escolha…</option>' : '')
+      + pontos.map((p) => `<option value="${esc(p.id)}">${esc(p.nome)}${p.horario ? ` — ${esc(hora(p.horario))}` : ''}</option>`).join('');
+    if (atual && pontos.some((p) => p.id === atual)) sel.value = atual;
+    $('#campo-politica').hidden = !v.politica_cancelamento;
   }
 
   document.addEventListener('click', (e) => {
@@ -563,7 +821,8 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
     if (abrir && estado.viagem) {
       const tipo = abrir.dataset.abrirCheckout;
       if (tipo) $(`input[name="tipo_pagamento"][value="${tipo}"]`).checked = true;
-      if (estado.reserva && estado.reserva.status === 'PENDENTE') passo('pix'); else passo('form');
+      if (estado.reserva && estado.reserva.status === 'PENDENTE') passo('pix');
+      else passo(estado.viagem.layout && !estado.poltrona ? 'poltrona' : 'form');
       dlg.showModal();
       prepararTurnstile();
     }
@@ -603,6 +862,8 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
     if (!/^[1-9]{2}9?\d{8}$/.test(d.telefone.replace(/\D/g, ''))) e.telefone = 'Celular com DDD.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email.trim())) e.email = 'E-mail inválido.';
     if (!d.aceite_lgpd) e.aceite_lgpd = 'Necessário';
+    if (!$('#campo-ponto').hidden && !d.ponto_embarque_id) e.ponto_embarque_id = 'Escolha onde vai embarcar.';
+    if (!$('#campo-politica').hidden && !d.aceite_politica) e.aceite_politica = 'Necessário';
     return e;
   }
 
@@ -612,7 +873,7 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
       if (msg) { el.setAttribute('data-erro', ''); const m = $('.msg', el); if (m) m.textContent = msg; }
       else el.removeAttribute('data-erro');
     });
-    const primeiro = $('[data-erro] input', form);
+    const primeiro = $('[data-erro] input, [data-erro] select', form);
     if (primeiro) primeiro.focus();
   }
 
@@ -637,7 +898,11 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
       email: String(fd.get('email') || ''),
       aceite_lgpd: $('#f-aceite').checked,
       turnstile_token: estado.turnstileToken,
+      poltrona: estado.viagem.layout ? estado.poltrona : null,
+      ponto_embarque_id: $('#campo-ponto').hidden ? null : ($('#f-ponto').value || null),
+      aceite_politica: $('#f-politica').checked,
     };
+    if (estado.viagem.layout && !estado.poltrona) return passo('poltrona');
     const erros = validar(dados);
     mostrarErros(erros);
     if (Object.keys(erros).length) return;
@@ -653,6 +918,12 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
       const er = r.json.erro || {};
       if (er.campos) mostrarErros(er.campos);
       if (er.codigo === 'ESGOTADO') { erroGeral(er.mensagem); recarregarViagem(); return; }
+      if (er.codigo === 'POLTRONA_OCUPADA' || er.campos?.poltrona) {
+        estado.poltrona = null;
+        await recarregarViagem();
+        const ep = $('#erro-poltrona'); ep.textContent = er.mensagem; ep.classList.add('visivel');
+        return passo('poltrona');
+      }
       return erroGeral(er.mensagem || 'Não foi possível concluir. Tente novamente.');
     }
     abrirPix(r.json.data);
@@ -670,6 +941,7 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
     $('#btn-comprovante').href = zapLink(texto);
     $('#btn-comprovante-2').href = zapLink(texto);
     $('#btn-simular').hidden = !estado.config.simulado;
+    $('#pix-link').href = `/r/${reserva.reserva_id}`;
     passo('pix');
     if (!dlg.open) dlg.showModal();
     iniciarContador(reserva.expira_em);
@@ -719,13 +991,18 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
     $('#v-codigo').textContent = d.codigo;
     $('#v-viagem').textContent = d.titulo;
     $('#v-partida').textContent = dataHora(d.data_partida);
-    $('#v-embarque').textContent = d.local_embarque || 'A agência informará';
+    $('#v-embarque').textContent = d.ponto_embarque_nome || d.local_embarque || 'A agência informará';
+    $('#v-poltrona').textContent = d.poltrona ?? '—';
+    $('#v-poltrona').hidden = $('#v-poltrona-dt').hidden = !d.poltrona;
     $('#v-pago').textContent = `${reais(d.valor_centavos)} (${d.tipo_pagamento === 'SINAL' ? 'sinal' : 'integral'})`;
+    $('#v-link').href = d.link || `/r/${d.id}`;
     const saldo = $('#v-saldo');
-    if (d.tipo_pagamento === 'SINAL') {
+    const falta = (d.valor_total_centavos ?? estado.viagem.preco_integral_centavos) - d.valor_centavos;
+    if (d.tipo_pagamento === 'SINAL' && falta > 0) {
       saldo.hidden = false;
-      saldo.textContent = `Saldo restante: ${reais(estado.viagem.preco_integral_centavos - d.valor_centavos)} — a agência combinará o pagamento com você.`;
+      saldo.textContent = `Saldo restante: ${reais(falta)} — pague quando quiser pelo Pix, na página da sua reserva.`;
     } else saldo.hidden = true;
+    estado.poltrona = null;
     passo('ok');
     if (!dlg.open) dlg.showModal();
     recarregarViagem();
@@ -755,6 +1032,119 @@ dialog::backdrop{background:rgba(20,33,61,.6);backdrop-filter:blur(3px)}
   $('#btn-simular').addEventListener('click', async () => {
     const r = await api(`/api/dev/simular-pagamento/${estado.reserva.reserva_id}`, { method: 'POST' });
     if (r.json.ok) consultarStatus(estado.reserva.reserva_id);
+  });
+
+  // ---------- página da reserva (/r/<id>) ----------
+  const NOME_STATUS = { CONFIRMADO: 'Confirmada', PENDENTE: 'Aguardando pagamento', EXPIRADO: 'Expirada', CANCELADO: 'Cancelada' };
+  const NOME_PAG = { RESERVA: 'Pix da reserva', SALDO: 'Pix do saldo', MANUAL: 'Recebido pela agência' };
+  async function renderReserva(id) {
+    limparTimers();
+    $('#cta-fixo').hidden = true;
+    const r = await api(`/api/r/${id}`);
+    if (!r.json.ok) return renderErro('Não encontramos esta reserva. Confira o link que você recebeu.');
+    const d = r.json.data, v = d.viagem;
+    document.title = `Reserva ${d.codigo} — ${estado.config.agencia_nome}`;
+    const cancelada = v.situacao === 'CANCELADA';
+    const pix = d.pix_pendente;
+    $('#app').innerHTML = `
+      <section><div class="wrap reserva">
+        <div class="banner" style="background-image:url('${esc(v.capa || '/img/banner.webp')}')"></div>
+        <div class="cartao-r">
+          <span class="status st-${esc(d.status)}">${esc(NOME_STATUS[d.status] || d.status)}</span>
+          <h1 class="titulo-secao" style="margin:.6rem 0 .2rem">${esc(v.titulo)}</h1>
+          <p class="sub" style="margin:0 0 1rem">Olá, ${esc(d.primeiro_nome)}! Código da reserva <b style="letter-spacing:.06em">${esc(d.codigo)}</b></p>
+          <dl class="lista-dl">
+            <dt>Saída</dt><dd>${esc(dataHora(v.data_partida))}</dd>
+            ${v.data_retorno ? `<dt>Retorno</dt><dd>${esc(dataHora(v.data_retorno))}</dd>` : ''}
+            ${d.ponto_embarque ? `<dt>Embarque</dt><dd>${esc(d.ponto_embarque.nome)}${d.ponto_embarque.horario ? ` — ${esc(dataHora(d.ponto_embarque.horario))}` : ''}${d.ponto_embarque.endereco ? `<br><small style="font-weight:400;color:var(--tinta-2)">${esc(d.ponto_embarque.endereco)}</small>` : ''}</dd>` : ''}
+            ${d.poltrona ? `<dt>Poltrona</dt><dd>${esc(d.poltrona)}</dd>` : ''}
+            ${d.motorista_nome ? `<dt>Motorista</dt><dd>${esc(d.motorista_nome)}</dd>` : ''}
+          </dl>
+        </div>
+
+        ${cancelada ? `<div class="alerta-box erro"><b>Esta viagem foi cancelada pela agência.</b>${v.motivo_cancelamento ? `<br>Motivo: ${esc(v.motivo_cancelamento)}` : ''}<br>O valor pago será devolvido; a agência vai falar com você.</div>` : ''}
+        ${d.desistencia_em ? `<div class="alerta-box">Pedido de desistência enviado em ${esc(dataHora(d.desistencia_em))}. A agência vai analisar conforme a política de cancelamento e falar com você.</div>` : ''}
+
+        ${pix ? `<div class="cartao-r pix">
+          <h2>Pague o Pix para garantir a poltrona</h2>
+          <div class="contador" id="contador">⏱ <span id="contador-txt">--:--</span></div>
+          <div class="resumo"><span>Valor</span><strong>${esc(reais(pix.valor_centavos))}</strong></div>
+          <div class="qr"><img alt="QR Code Pix" src="data:${esc(pix.qr_mime || 'image/png')};base64,${esc(pix.qr_base64)}"></div>
+          <div class="copia"><input readonly value="${esc(pix.copia_e_cola)}" id="r-copia" aria-label="Pix copia e cola"><button class="btn btn-noite" type="button" data-copiar="#r-copia">Copiar</button></div>
+          ${estado.config.simulado ? '<button class="btn btn-borda btn-bloco" type="button" id="r-simular">Simular pagamento (ambiente de teste)</button>' : ''}
+        </div>` : ''}
+
+        ${['CONFIRMADO'].includes(d.status) && !cancelada ? `<div class="cartao-r">
+          <h2>Pagamento</h2>
+          <div class="valores">
+            <div><small>Total</small><strong>${esc(reais(d.valor_total_centavos))}</strong></div>
+            <div><small>Pago</small><strong>${esc(reais(d.pago_centavos))}</strong></div>
+            <div><small>Falta</small><strong style="color:${d.saldo_centavos ? 'var(--sol-escuro)' : 'var(--ok)'}">${d.saldo_centavos ? esc(reais(d.saldo_centavos)) : 'Quitada ✓'}</strong></div>
+          </div>
+          ${d.pagamentos.length ? `<dl class="lista-dl" style="font-size:.88rem;margin-bottom:1rem">${d.pagamentos.map((p) => `<dt>${esc(dataCurta(p.data))}</dt><dd>${esc(NOME_PAG[p.tipo] || p.tipo)} · ${esc(reais(p.valor_centavos))}</dd>`).join('')}</dl>` : ''}
+          ${d.saldo_centavos ? `<div id="saldo-area"><button class="btn btn-sol btn-bloco" type="button" id="r-pagar-saldo">Pagar ${esc(reais(d.saldo_centavos))} com Pix</button></div>` : ''}
+        </div>` : ''}
+
+        <div class="cartao-r pilha">
+          ${d.grupo_whatsapp ? `<a class="btn btn-zap" href="${esc(d.grupo_whatsapp)}" target="_blank" rel="noopener">Entrar no grupo da viagem no WhatsApp</a>` : ''}
+          <a class="btn btn-borda" href="${esc(zapLink(`Olá! Sobre a minha reserva ${d.codigo} (${v.titulo}).`))}" target="_blank" rel="noopener">Falar com a agência</a>
+          ${d.status === 'CONFIRMADO' && !cancelada ? '<button class="btn btn-borda" type="button" onclick="window.print()">Salvar / imprimir comprovante</button>' : ''}
+          ${d.status === 'EXPIRADO' ? `<a class="btn btn-sol" href="/viagem/${esc(v.id)}">Fazer nova reserva</a>` : ''}
+          ${d.pode_pedir_desistencia ? '<button class="link-btn" type="button" id="r-desistir" style="margin-top:.4rem;color:var(--erro)">Não vou mais viajar — pedir desistência</button>' : ''}
+        </div>
+
+        ${d.politica_aceita ? `<details class="politica"><summary>Política de cancelamento que você aceitou</summary><p>${esc(d.politica_aceita)}</p></details>` : ''}
+      </div></section>`;
+
+    // Pix da reserva ainda em aberto: contador + confere a cada 5 s.
+    if (pix) {
+      const fim = new Date(pix.expira_em).getTime();
+      const tick = () => {
+        const s = Math.max(0, Math.round((fim - Date.now()) / 1000));
+        const el = $('#contador-txt'); if (!el) return;
+        el.textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+        $('#contador').classList.toggle('critico', s <= 120);
+      };
+      tick();
+      estado.timers.push(setInterval(tick, 1000), setInterval(() => conferir(id, d), 5000));
+    }
+    $('#r-simular')?.addEventListener('click', async () => { await api(`/api/dev/simular-pagamento/${id}`, { method: 'POST' }); renderReserva(id); });
+    $('#r-pagar-saldo')?.addEventListener('click', async (e) => {
+      const btn = e.target; btn.disabled = true; btn.textContent = 'Gerando Pix…';
+      const res = await api(`/api/r/${id}/saldo`, { method: 'POST' }).catch(() => null);
+      if (!res?.json?.ok) { btn.disabled = false; btn.textContent = 'Tentar de novo'; return alert(res?.json?.erro?.mensagem || 'Não foi possível gerar o Pix agora.'); }
+      const s = res.json.data;
+      $('#saldo-area').innerHTML = `<div class="pix">
+        <div class="resumo"><span>Saldo · vale até ${esc(hora(s.expira_em))}</span><strong>${esc(reais(s.valor_centavos))}</strong></div>
+        <div class="qr"><img alt="QR Code Pix do saldo" src="data:${esc(s.pix.qr_mime || 'image/png')};base64,${esc(s.pix.qr_base64)}"></div>
+        <div class="copia"><input readonly value="${esc(s.pix.copia_e_cola)}" id="s-copia" aria-label="Pix copia e cola do saldo"><button class="btn btn-noite" type="button" data-copiar="#s-copia">Copiar</button></div>
+        <div class="estado" aria-live="polite"><span class="pulso"></span><span>Aguardando pagamento… esta página atualiza sozinha.</span></div>
+        ${estado.config.simulado ? '<button class="btn btn-borda btn-bloco" type="button" id="s-simular">Simular pagamento (ambiente de teste)</button>' : ''}
+      </div>`;
+      $('#s-simular')?.addEventListener('click', async () => { await api(`/api/dev/simular-pagamento/${id}`, { method: 'POST' }); renderReserva(id); });
+      estado.timers.push(setInterval(() => conferir(id, d), 5000));
+    });
+    $('#r-desistir')?.addEventListener('click', async () => {
+      const motivo = prompt('Conte por que você não vai viajar (opcional). A agência analisa o pedido conforme a política de cancelamento.');
+      if (motivo === null) return;
+      const res = await api(`/api/r/${id}/desistencia`, { method: 'POST', body: JSON.stringify({ motivo }) });
+      if (!res.json.ok) return alert(res.json.erro?.mensagem || 'Não foi possível enviar o pedido.');
+      renderReserva(id);
+    });
+  }
+  // Recarrega a página da reserva quando o status ou o valor pago mudar.
+  async function conferir(id, antes) {
+    const r = await api(`/api/r/${id}`).catch(() => null);
+    const d = r?.json?.data;
+    if (d && (d.status !== antes.status || d.pago_centavos !== antes.pago_centavos)) renderReserva(id);
+  }
+  const dataCurta = (iso) => new Date(iso).toLocaleDateString('pt-BR', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' });
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-copiar]');
+    if (!b) return;
+    const input = $(b.dataset.copiar);
+    try { await navigator.clipboard.writeText(input.value); } catch { input.select(); document.execCommand('copy'); }
+    b.textContent = 'Copiado!'; setTimeout(() => (b.textContent = 'Copiar'), 2000);
   });
 
   // ---------- Turnstile (carregado só quando o checkout abre) ----------
