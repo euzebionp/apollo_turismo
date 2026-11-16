@@ -101,6 +101,11 @@ section{padding:56px 0}
 .foto img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .foto:hover img{transform:scale(1.04)}
 .foto span{position:absolute;left:0;right:0;bottom:0;padding:1.4rem .8rem .6rem;color:#fff;font-size:.88rem;font-weight:500;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.foto .play{position:absolute;inset:0;margin:auto;width:58px;height:58px;border-radius:50%;background:rgba(0,0,0,.62);display:grid;place-items:center;padding:0;pointer-events:none}
+.foto .play::before{content:"";border-style:solid;border-width:11px 0 11px 18px;border-color:transparent transparent transparent #fff;margin-left:4px}
+.lightbox .video{aspect-ratio:16/9;max-height:80dvh;margin:0 auto;background:#000}
+.lightbox .video.vertical{aspect-ratio:9/16;height:80dvh}
+.lightbox .video iframe{width:100%;height:100%;border:0;display:block}
 .foto:focus-visible{outline:3px solid var(--noite-2);outline-offset:2px}
 .vazio{color:var(--tinta-2);padding:1rem 0}
 
@@ -468,9 +473,10 @@ details.politica p{white-space:pre-line;color:var(--tinta-2);margin:.75rem 0 0}
   </div>
 </dialog>
 
-<dialog class="lightbox" id="dlg-foto" aria-label="Foto ampliada">
+<dialog class="lightbox" id="dlg-foto" aria-label="Foto ou vídeo ampliado">
   <button class="fechar" type="button" data-fechar aria-label="Fechar">×</button>
   <img id="lb-img" alt="">
+  <div class="video" id="lb-video" hidden></div>
   <p id="lb-legenda"></p>
 </dialog>
 
@@ -743,11 +749,20 @@ details.politica p{white-space:pre-line;color:var(--tinta-2);margin:.75rem 0 0}
     $$('[data-aba]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.aba === chave)));
     const fotos = estado.viagem.fotos?.[chave] || [];
     $('#grade').innerHTML = fotos.length
-      ? fotos.map((f, i) => `<button class="foto" type="button" data-foto="${i}"><img src="${esc(f.url)}" alt="${esc(f.legenda || '')}" loading="lazy" decoding="async">${f.legenda ? `<span>${esc(f.legenda)}</span>` : ''}</button>`).join('')
+      ? fotos.map((f, i) => `<button class="foto" type="button" data-foto="${i}"${f.youtube ? ` aria-label="Assistir ao vídeo${f.legenda ? `: ${esc(f.legenda)}` : ''}"` : ''}><img src="${esc(f.url)}" alt="${esc(f.legenda || '')}" loading="lazy" decoding="async">${f.youtube ? '<span class="play"></span>' : ''}${f.legenda ? `<span>${esc(f.legenda)}</span>` : ''}</button>`).join('')
       : '<p class="vazio">Fotos em breve.</p>';
     $$('[data-foto]').forEach((b) => b.addEventListener('click', () => {
       const f = fotos[Number(b.dataset.foto)];
-      $('#lb-img').src = f.url; $('#lb-img').alt = f.legenda || ''; $('#lb-legenda').textContent = f.legenda || '';
+      const ehVideo = /^[A-Za-z0-9_-]{11}$/.test(f.youtube || '');
+      const img = $('#lb-img'), video = $('#lb-video');
+      img.hidden = ehVideo; video.hidden = !ehVideo;
+      if (ehVideo) {
+        // Miniatura em pé (Shorts/Reels) → player em pé. O vídeo só é carregado quando o cliente toca.
+        const mini = b.querySelector('img');
+        video.classList.toggle('vertical', !!mini && mini.naturalHeight > mini.naturalWidth);
+        video.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${f.youtube}?autoplay=1&rel=0&playsinline=1" title="${esc(f.legenda || 'Vídeo da viagem')}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+      } else { img.src = f.url; img.alt = f.legenda || ''; }
+      $('#lb-legenda').textContent = f.legenda || '';
       $('#dlg-foto').showModal();
     }));
   }
@@ -830,6 +845,8 @@ details.politica p{white-space:pre-line;color:var(--tinta-2);margin:.75rem 0 0}
     if (fechar) fechar.closest('dialog').close();
   });
   $$('dialog').forEach((d) => d.addEventListener('click', (e) => { if (e.target === d) d.close(); }));
+  // Ao fechar a foto/vídeo ampliado, remove o player para o vídeo parar de tocar.
+  $('#dlg-foto').addEventListener('close', () => { $('#lb-video').innerHTML = ''; });
 
   // máscaras
   const mascaraCpf = (v) => v.replace(/\D/g, '').slice(0, 11).replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');

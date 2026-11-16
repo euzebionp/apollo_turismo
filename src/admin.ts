@@ -208,6 +208,7 @@ interface ViagemInput {
   motorista_whatsapp: string | null; veiculo_descricao: string | null;
 }
 
+const REGEX_YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
 const texto = (x: unknown, max: number) => String(x ?? '').trim().slice(0, max) || null;
 
 function validarViagem(b: any, criando: boolean): { ok: true; v: ViagemInput } | { ok: false; campos: Record<string, string> } {
@@ -248,8 +249,18 @@ function validarViagem(b: any, criando: boolean): { ok: true; v: ViagemInput } |
   const f = b?.fotos ?? {};
   const fotos = { veiculo: f.veiculo ?? [], hospedagem: f.hospedagem ?? [], destino: f.destino ?? [] };
   if (![fotos.veiculo, fotos.hospedagem, fotos.destino].every(Array.isArray)) campos.fotos = 'Fotos inválidas';
-  for (const lista of Object.values(fotos) as any[]) {
-    if (Array.isArray(lista) && lista.some((x) => { const u = String(x?.url ?? ''); return !/^https:\/\/\S+$/.test(u) && !REGEX_URL_FOTO.test(u); })) campos.fotos = 'Foto inválida: envie um arquivo ou use um link https://';
+  for (const k of ['veiculo', 'hospedagem', 'destino'] as const) {
+    const lista = fotos[k];
+    if (!Array.isArray(lista)) continue;
+    if (lista.some((x: any) => { const u = String(x?.url ?? ''); return !x?.youtube && !/^https:\/\/\S+$/.test(u) && !REGEX_URL_FOTO.test(u); })) campos.fotos = 'Foto inválida: envie um arquivo ou use um link https://';
+    if (lista.some((x: any) => x?.youtube && !REGEX_YOUTUBE_ID.test(String(x.youtube)))) campos.fotos = 'Vídeo inválido: cole o link de um vídeo do YouTube';
+    // Guarda só os campos conhecidos. Vídeo do YouTube: "url" é a miniatura (serve de capa e de prévia do link).
+    fotos[k] = lista.map((x: any) => {
+      const legenda = String(x?.legenda ?? '').trim().slice(0, 120);
+      return x?.youtube
+        ? { url: `https://i.ytimg.com/vi/${x.youtube}/hqdefault.jpg`, legenda, youtube: String(x.youtube) }
+        : { url: String(x?.url ?? '').trim(), legenda };
+    });
   }
   if (Object.keys(campos).length) return { ok: false, campos };
   return {

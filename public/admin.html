@@ -115,6 +115,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--noite);b
 .foto-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .foto-card .selo-capa{position:absolute;top:6px;left:6px;background:var(--sol);color:#fff;font-size:.7rem;font-weight:800;padding:.1rem .45rem;border-radius:6px;text-transform:uppercase}
 .foto-card .estado{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,33,61,.55);color:#fff;font-size:.82rem;font-weight:600;text-align:center;padding:8px}
+.foto-card .selo-video{position:absolute;bottom:6px;left:6px;background:rgba(20,33,61,.85);color:#fff;font-size:.7rem;font-weight:800;padding:.1rem .45rem;border-radius:6px}
 .foto-card .estado.erro{background:rgba(185,28,28,.8)}
 .foto-card input{border:0;border-top:1px solid var(--linha);border-radius:0;font-size:.85rem;padding:.5rem .6rem}
 .foto-card .barra-acoes{display:flex;border-top:1px solid var(--linha)}
@@ -628,6 +629,21 @@ header nav{overflow-x:auto}
           <button class="btn btn-borda btn-mini" type="button" data-add-item="${i}">+ Horário</button>
         </div>`).join('') || '<p class="sub">Nenhum dia cadastrado.</p>';
     }
+    // Aceita youtube.com/watch?v=, youtu.be/, /shorts/, /embed/ e /live/. Devolve o id, '' (não reconhecido) ou null (cancelou).
+    function idYoutube(texto) {
+      const t = texto.trim();
+      if (!t) return null;
+      if (/^[A-Za-z0-9_-]{11}$/.test(t)) return t;
+      let u; try { u = new URL(/^https?:\/\//i.test(t) ? t : `https://${t}`); } catch { return ''; }
+      const host = u.hostname.replace(/^(www|m|music)\./, '');
+      let idv = '';
+      if (host === 'youtu.be') idv = u.pathname.split('/')[1] || '';
+      else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
+        const m = u.pathname.match(/^\/(?:shorts|embed|live|v)\/([^/?#]+)/);
+        idv = m ? m[1] : (u.searchParams.get('v') || '');
+      }
+      return /^[A-Za-z0-9_-]{11}$/.test(idv) ? idv : '';
+    }
     const CATS = [['veiculo', 'Ônibus'], ['hospedagem', 'Hospedagem'], ['destino', 'Destino']];
     let enviando = 0;
     function atualizarSalvar() { const b = $('#salvar'); if (b) { b.disabled = enviando > 0; b.textContent = enviando > 0 ? `Enviando ${enviando} foto(s)…` : (criando ? 'Criar viagem' : 'Salvar alterações'); } }
@@ -639,6 +655,7 @@ header nav{overflow-x:auto}
               <div class="thumb">
                 <img src="${esc(f._previa || f.url)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
                 ${k === 'destino' && i === 0 ? '<span class="selo-capa">Capa</span>' : ''}
+                ${f.youtube ? '<span class="selo-video">▶ Vídeo</span>' : ''}
                 ${f._enviando ? '<div class="estado">Enviando…</div>' : ''}
                 ${f._erro ? `<div class="estado erro">${esc(f._erro)}</div>` : ''}
               </div>
@@ -653,7 +670,8 @@ header nav{overflow-x:auto}
             Arraste as fotos aqui<br>
             <label class="btn btn-noite btn-mini" style="cursor:pointer">Escolher fotos do computador<input type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.avif,.bmp,.heic,.heif,image/jpeg,image/png,image/webp,image/gif,image/avif,image/bmp,image/heic,image/heif" multiple hidden data-arquivos="${k}"></label>
             <button class="btn btn-borda btn-mini" type="button" data-link-foto="${k}">Usar link da internet</button>
-            <small>JPG, PNG, WebP, GIF, AVIF ou BMP · várias de uma vez · HEIC: use o Safari ou converta para JPG</small>
+            <button class="btn btn-borda btn-mini" type="button" data-link-video="${k}">▶ Vídeo do YouTube</button>
+            <small>JPG, PNG, WebP, GIF, AVIF ou BMP · várias de uma vez · HEIC: use o Safari ou converta para JPG · Vídeo: publique no YouTube (até 1 min) e cole o link</small>
           </div>` : ''}
         </div>`).join('');
       atualizarSalvar();
@@ -811,6 +829,14 @@ header nav{overflow-x:auto}
         if (!/^https:\/\/\S+$/.test(url)) return toast('O link precisa começar com https://', true);
         fotos[t.dataset.linkFoto].push({ url, legenda: '' }); renderFotos();
       }
+      if (t.dataset.linkVideo) {
+        const idVideo = idYoutube(prompt('Cole o link do vídeo no YouTube (até 1 minuto):') || '');
+        if (idVideo === null) return;
+        if (!idVideo) return toast('Não reconheci esse link. Use o link de um vídeo ou Short do YouTube.', true);
+        if (Object.values(fotos).flat().some((f) => f.youtube === idVideo)) return toast('Esse vídeo já está na viagem.', true);
+        fotos[t.dataset.linkVideo].push({ url: `https://i.ytimg.com/vi/${idVideo}/hqdefault.jpg`, legenda: '', youtube: idVideo }); renderFotos();
+        toast('Vídeo adicionado. Clique em salvar para publicar.');
+      }
       if (t.dataset.rmFoto) { const [k, i] = t.dataset.rmFoto.split(':'); const [f] = fotos[k].splice(+i, 1); if (f?._previa) URL.revokeObjectURL(f._previa); renderFotos(); }
       if (t.dataset.mover) {
         const [k, i, d] = t.dataset.mover.split(':'); const a = +i, b = a + +d;
@@ -847,7 +873,7 @@ header nav{overflow-x:auto}
         motorista_whatsapp: $('#e-motorista-zap').value,
         veiculo_descricao: $('#e-veiculo').value,
         programacao: prog.map((d, i) => ({ dia: i + 1, titulo: d.titulo.trim(), itens: (d.itens || []).filter((it) => it.atividade.trim()).map((it) => ({ hora: it.hora.trim(), atividade: it.atividade.trim() })) })).filter((d) => d.titulo || d.itens.length),
-        fotos: Object.fromEntries(Object.entries(fotos).map(([k, l]) => [k, l.filter((f) => f.url && !f._erro).map((f) => ({ url: f.url.trim(), legenda: (f.legenda || '').trim() }))])),
+        fotos: Object.fromEntries(Object.entries(fotos).map(([k, l]) => [k, l.filter((f) => f.url && !f._erro).map((f) => ({ url: f.url.trim(), legenda: (f.legenda || '').trim(), ...(f.youtube ? { youtube: f.youtube } : {}) }))])),
       };
       // aviso de mudança de preço
       if (!criando && (payload.preco_integral_centavos !== v.preco_integral_centavos || payload.preco_sinal_centavos !== v.preco_sinal_centavos)) {
